@@ -1,0 +1,2975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Liora Studio — Hair, nails, lashes. Prices up front.</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23c45c6e'/%3E%3Ctext x='16' y='22' text-anchor='middle' font-family='Georgia,serif' font-size='16' fill='%23fffaf7'%3EL%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <meta name="description" content="Demo beauty salon website for Malta. Hair, nails, lashes and brows with prices and the next free times on the first screen. Book in two taps or via chat.">
+  <meta name="robots" content="noindex,nofollow">
+  <!--
+    Customise the site for a new client by editing CONFIG below.
+    The page, colours, prices, branches, reviews and chat all read from it.
+    See README.md for a short guide.
+  -->
+  <script>
+const CONFIG = {
+    name: "Liora Studio",
+    kind: "salon",
+    staffWord: "stylist",
+    staffLabel: "Stylist",
+    placeWord: "salon",
+    brandHtml: "Liora <span>Studio</span>",
+    phone: "+356 0000 1111",
+    callLabel: "Call \u00a00000 1111",
+    timeZone: "Europe/Malta",
+    currency: "€",
+
+    colors: {
+      bg: "#faf4ef",
+      bg2: "#fff7f2",
+      surface: "#ffffff",
+      line: "#eddcd3",
+      gold: "#c45c6e",
+      gold2: "#e08a98",
+      text: "#3a2a2c",
+      muted: "#8a7370",
+      soft: "#5c4a48",
+    },
+
+    demoBanner: {
+      show: true,
+      text: "Demo — this could be your salon"
+    },
+
+    metaTitle: "Liora Studio — Hair, nails, lashes. Prices up front.",
+    metaDescription: "Demo beauty salon website for Malta. Hair, nails, lashes and brows with prices and the next free times on the first screen. Book in two taps or via chat.",
+
+    headlineHtml: "Hair, nails, lashes.<br>Prices up front.",
+    tagline: "See the price, pick a time, you’re booked.",
+    kicker: "",
+
+    copy: {
+      bookNow: "Book now",
+      callShop: "Call the salon",
+      hint: "Tap a service, then a time. Or book in the chat — it only takes a minute.",
+      servicesTitle: "Services & prices",
+      pricesNote: "Example prices for this demo — a real salon would show its own.",
+      slotsTitleToday: "Next free slots today",
+      slotsTitleOther: "Next free slots {day}",
+      slotsNote: "Demo availability — not a live calendar. Times respect each service’s duration.",
+      branchesTitle: "Three studios, one number",
+      branchesLede: "Pick the closest chair. Call or open maps.",
+      reviewsTitle: "What clients say",
+      reviewsLede: "Short and useful — the kind of reviews people actually read.",
+      aboutTitle: "The salon",
+      about: "Liora Studio is a fictional Malta beauty house built for this demo: hair colour and cuts, gel and BIAB nails, lash lifts and brow laminations, with prices on the first screen and a chair you can hold in two taps. The look is light and colourful so a salon can picture this as their own site, without galleries getting in the way of booking.",
+      footerBlurb: "A demo website for Malta beauty salons, nail studios and lash bars.",
+      footerFine: "This is a pitch mockup, not a live salon. Names, addresses, prices and times are examples. Bookings stay on this page — nothing is charged, and you pay in the salon.",
+      stickyReady: "Ready to book?",
+      stickyHint: "Service, time, done."
+    },
+
+    aiEndpoint: "https://barber-demo-ai.mackan83.workers.dev/",
+
+    chat: {
+      title: "Booking assistant",
+      subtitle: "Demo chat — no live calendar",
+      greeting: "Hello — I can help you book a visit. Which studio would you prefer?"
+    },
+
+    heroAside: {
+      trust: { rating: "4.9", countLabel: "200+ Google reviews", note: "Demo data" },
+      benefits: [
+        { id: "fees", label: "No booking fees", icon: "tag" },
+        { id: "pay", label: "Pay in salon", icon: "card" },
+        { id: "instant", label: "Instant confirmation", icon: "check" },
+        { id: "change", label: "Change or cancel anytime", icon: "calendar" }
+      ],
+      quote: {
+        text: "Booked a gel manicure in two taps and the price was right there. No hunting through menus.",
+        who: "Maya · Sliema"
+      },
+      hoursLine: "",
+      chatButton: "Chat with our assistant"
+    },
+
+    services: [
+      { id: "cutblow", name: "Cut & blow-dry", category: "Hair", price: 32, mins: 60, aliases: ["cut", "blow dry", "blow-dry", "haircut", "trim", "hair cut"] },
+      { id: "colour", name: "Colour (roots)", category: "Hair", price: 55, mins: 90, aliases: ["color", "roots", "tint hair", "dye"] },
+      { id: "highlights", name: "Highlights", category: "Hair", price: 85, mins: 120, aliases: ["highlight", "foils"] },
+      { id: "balayage", name: "Balayage", category: "Hair", price: 110, mins: 150, aliases: ["bala", "balyage"] },
+      { id: "gelmani", name: "Gel manicure", category: "Nails", price: 30, mins: 60, aliases: ["gel", "manicure", "gel man", "nails"] },
+      { id: "biab", name: "BIAB", category: "Nails", price: 40, mins: 75, aliases: ["builder", "builder gel", "biab nails"] },
+      { id: "acrylic", name: "Acrylic full set", category: "Nails", price: 48, mins: 90, aliases: ["acrylic", "full set", "extensions"] },
+      { id: "pedi", name: "Pedicure", category: "Nails", price: 35, mins: 50, aliases: ["pedi", "foot"] },
+      { id: "lashlift", name: "Lash lift", category: "Lashes & brows", price: 40, mins: 60, aliases: ["lash", "lash lift", "lashes"] },
+      { id: "browlam", name: "Brow lamination", category: "Lashes & brows", price: 35, mins: 45, aliases: ["lamination", "brow lam", "brow lift"] },
+      { id: "tint", name: "Brow or lash tint", category: "Lashes & brows", price: 12, mins: 20, aliases: ["tint", "dye brows", "lash tint"] },
+      { id: "lashcombo", name: "Lash lift + tint", category: "Lashes & brows", price: 48, mins: 75, aliases: ["lift and tint", "lash lift and tint"] },
+      { id: "facial", name: "Express facial", category: "Skin", price: 40, mins: 45, aliases: ["facial", "face"] },
+      { id: "browwax", name: "Brow wax", category: "Skin", price: 10, mins: 15, aliases: ["wax brows", "eyebrow wax"] },
+      { id: "legwax", name: "Half leg wax", category: "Skin", price: 18, mins: 30, aliases: ["wax", "leg wax", "half leg"] }
+    ],
+
+    branches: [
+      {
+        id: "sliema",
+        name: "Sliema",
+        address: "18 Triq Santa Marija, Tas-Sliema",
+        hours: "Mon–Sat 09:30–19:00",
+        closedLabel: "Closed Sun",
+        openDays: [1, 2, 3, 4, 5, 6],
+        openHour: 9.5,
+        closeHour: 19,
+        maps: "https://www.google.com/maps/search/?api=1&query=Triq+Santa+Marija+Sliema+Malta",
+        aliases: ["sliema", "sliem", "tigne", "tigné"]
+      },
+      {
+        id: "bkr",
+        name: "Birkirkara",
+        address: "9 Triq Santa Rita, Birkirkara",
+        hours: "Mon–Sat 09:00–18:30",
+        closedLabel: "Closed Sun",
+        openDays: [1, 2, 3, 4, 5, 6],
+        openHour: 9,
+        closeHour: 18.5,
+        maps: "https://www.google.com/maps/search/?api=1&query=Triq+Santa+Rita+Birkirkara+Malta",
+        aliases: ["birkirkara", "bkr", "b'kara", "bkara", "kara"]
+      },
+      {
+        id: "gzira",
+        name: "Gżira",
+        address: "4 Triq ix-Xatt, Il-Gżira",
+        hours: "Mon–Fri 10:00–19:00, Sat 09:00–17:00",
+        closedLabel: "Closed Sun",
+        openDays: [1, 2, 3, 4, 5, 6],
+        openHour: 10,
+        closeHour: 19,
+        closeHourByDay: { "6": 17 },
+        maps: "https://www.google.com/maps/search/?api=1&query=Triq+ix-Xatt+Gzira+Malta",
+        aliases: ["gzira", "gżira", "gzira", "msida side", "xatt"]
+      }
+    ],
+
+    knowledge: {
+      languages: ["English", "Maltese", "Italian"],
+      payment: {
+        methods: ["Cash", "debit or credit card", "contactless"],
+        online: false,
+        note: "Pay in the salon after your appointment. No online payment, no deposits on the website."
+      },
+      contactPrivacy: "Phone and email are only used for your booking, so the salon can reach you and you can easily change or cancel.",
+      walkIns: "Walk-ins are welcome if a chair is free. Bookings take priority, especially on Saturdays and for colour, balayage and acrylics.",
+      cancellation: "Cancel free of charge up to 2 hours before your time. If it is later than that, please call the salon so we can try to fill the chair.",
+      late: "We hold a booking for 10 minutes. After that the slot may go to a walk-in, and we will offer you the next free time.",
+      noShow: "Please cancel if you cannot come. After two no-shows we may ask you to book by phone only.",
+      kids: "We welcome children for a simple trim or a kids’ nail polish with an adult present. Under 12s are best earlier in the day. We do not offer chemical colour or acrylics for young children — please call if you are unsure.",
+      hygiene: "Metal tools are sterilised after every client, single-use files and buffers are not shared, and each client gets a fresh towel and a clean cape or gown.",
+      products: [
+        { name: "House hand cream", price: 12 },
+        { name: "Cuticle oil", price: 10 },
+        { name: "Brow gel", price: 14 },
+        { name: "Leave-in hair mist", price: 16 }
+      ],
+      productsNote: "Sold in the salon after your visit — ask your stylist. Prices are examples for this demo.",
+      giftVouchers: "Gift vouchers are sold in the salon only, from €20 up (or fixed €25, €40, €60). Valid for 12 months. Not sold online.",
+      groups: "For a bridal party, two or more colour clients, or a group of four and over, please call at least 2 weeks ahead so we can put more than one stylist on. Saturday mornings in Sliema usually work best.",
+      holidays: "Closed on Sundays and public holidays. On Christmas Eve and New Year's Eve we close at 14:00 if that day is otherwise a working day — worth a quick call to confirm.",
+      aftercare: "For gel, BIAB and acrylics, avoid soaking your hands for the first day. For a lash lift or brow lamination, keep the area dry for 24 hours and skip mascara or brow makeup that day. We will talk you through it before you leave.",
+      pregnancy: "We can do a gentle express facial, a brow wax, a manicure or a pedicure during pregnancy. Please mention it when you book. We prefer to skip strong chemical colour and some waxing on the belly or face — call us and we will advise.",
+      services: [
+        { id: "cutblow", name: "Cut & blow-dry", price: 32, mins: 60, includes: "Consultation, wash, a scissors cut, and a blow-dry finish. For all hair lengths." },
+        { id: "colour", name: "Colour (roots)", price: 55, mins: 90, includes: "A root tint, processing time, wash, and a simple blow-dry. A full head of permanent colour is quoted in the salon if you need more than the roots." },
+        { id: "highlights", name: "Highlights", price: 85, mins: 120, includes: "Foil highlights through the hair, toner if needed, wash, and a blow-dry. About two hours." },
+        { id: "balayage", name: "Balayage", price: 110, mins: 150, includes: "Hand-painted lightening, toner, treatment, and a blow-dry. Allow about two and a half hours." },
+        { id: "gelmani", name: "Gel manicure", price: 30, mins: 60, includes: "File, cuticle care, gel colour on natural nails, and a slow, even cure. Removal of an old gel from us is included; a soak-off from another salon may add a few minutes." },
+        { id: "biab", name: "BIAB", price: 40, mins: 75, includes: "Builder-in-a-bottle overlay on natural nails, with gel colour if you like, for added strength." },
+        { id: "acrylic", name: "Acrylic full set", price: 48, mins: 90, includes: "New acrylic extensions, shaped and finished with gel colour. Infills are offered in the salon on request — please call for that price." },
+        { id: "pedi", name: "Pedicure", price: 35, mins: 50, includes: "Soak, file, cuticle care, a short massage, and polish or a gel finish on request (gel is the same listed price in this demo)." },
+        { id: "lashlift", name: "Lash lift", price: 40, mins: 60, includes: "A lift on your natural lashes. Add a tint for a deeper finish — or book the lash lift + tint together." },
+        { id: "browlam", name: "Brow lamination", price: 35, mins: 45, includes: "Brow hairs are set into a fuller shape. A tint can be added; ask when you arrive or book a tint on its own." },
+        { id: "tint", name: "Brow or lash tint", price: 12, mins: 20, includes: "A tint for brows or lashes only. Patch tests are recommended if you have not had a tint with us before — call ahead if you can." },
+        { id: "lashcombo", name: "Lash lift + tint", price: 48, mins: 75, includes: "Lash lift and a tint in one visit, a little less than booking both apart." },
+        { id: "facial", name: "Express facial", price: 40, mins: 45, includes: "A cleanse, a short treatment, and a moisturiser, suited to a lunch break. Not a deep peel." },
+        { id: "browwax", name: "Brow wax", price: 10, mins: 15, includes: "A tidy wax and tweeze for the brows." },
+        { id: "legwax", name: "Half leg wax", price: 18, mins: 30, includes: "A half-leg wax to the knee. Full leg and other waxing can be arranged by phone." }
+      ],
+      branches: [
+        {
+          id: "sliema",
+          name: "Sliema",
+          address: "18 Triq Santa Marija, Tas-Sliema",
+          hours: "Monday–Saturday 09:30–19:00. Closed Sunday and public holidays.",
+          parking: "Paid parking near Sliema Ferries and in the side streets off Triq Santa Marija. The seafront is often busy on Saturdays.",
+          bus: "Buses along The Strand / Triq ix-Xatt stop a short walk from the studio, near the Ferries.",
+          accessibility: "First floor, up a short flight of stairs. There is no lift. Please call if you need a ground-floor appointment at another branch.",
+          staff: [
+            { name: "Elena Vella", specialties: "Colour, highlights and balayage" },
+            { name: "Maya Camilleri", specialties: "Cuts, blow-dry and styling" },
+            { name: "Nina Galea", specialties: "Gel, BIAB and acrylic nails" }
+          ]
+        },
+        {
+          id: "bkr",
+          name: "Birkirkara",
+          address: "9 Triq Santa Rita, Birkirkara",
+          hours: "Monday–Saturday 09:00–18:30. Closed Sunday and public holidays.",
+          parking: "Street parking around the parish and a public car park a few minutes’ walk. Evenings can be tight.",
+          bus: "Buses serving Birkirkara Centre and the Interchange stop within a short walk of Triq Santa Rita.",
+          accessibility: "Ground floor, step-free from the pavement, with a slightly narrow door. Staff will help if you need it.",
+          staff: [
+            { name: "Sara Attard", specialties: "Lash lifts, brow lamination and tints" },
+            { name: "Claire Borg", specialties: "Nails, gel and pedicures" },
+            { name: "Hannah Micallef", specialties: "Cuts, colour and blow-dry" }
+          ]
+        },
+        {
+          id: "gzira",
+          name: "Gżira",
+          address: "4 Triq ix-Xatt, Il-Gżira",
+          hours: "Monday–Friday 10:00–19:00, Saturday 09:00–17:00. Closed Sunday and public holidays.",
+          parking: "Paid parking along the Gżira front and in nearby side streets. Weekday lunchtimes are usually easier than Saturday.",
+          bus: "Buses along the Gżira / Msida seafront stop close to the studio.",
+          accessibility: "Ground floor, level with the pavement. The doorway is a comfortable width for a buggy or a wheelchair.",
+          staff: [
+            { name: "Julia Farrugia", specialties: "Express facials and waxing" },
+            { name: "Petra Azzopardi", specialties: "Gel, BIAB and acrylic nails" },
+            { name: "Lea Spiteri", specialties: "Lash lifts, brows and tints" }
+          ]
+        }
+      ],
+      faqs: [
+        { q: "Do I need an appointment?", a: "Booking is recommended, especially for colour, balayage and acrylics. Walk-ins are welcome if a chair is free; bookings go first." },
+        { q: "Do you do gel nails?", a: "Yes. A gel manicure is €30 and takes about 60 minutes. We also offer BIAB and acrylic full sets." },
+        { q: "Are you open on Sunday?", a: "No. All three studios are closed on Sundays and public holidays." },
+        { q: "What languages do you speak?", a: "English and Maltese in every studio, and Italian at the Sliema branch." }
+      ]
+    },
+
+    reviews: [
+      { stars: 5, text: "Booked a gel manicure in two taps and the price was right there. No hunting through menus.", who: "Maya · Sliema" },
+      { stars: 5, text: "Lovely lash lift, on time, and they told me the aftercare without rushing. I’ll be back.", who: "Sara · Birkirkara" },
+      { stars: 5, text: "Had a cut and blow-dry in Gżira. Honest price on the first screen and the chair was ready.", who: "Lea · Gżira" }
+    ]
+  };
+  </script>
+  <style>
+    :root {
+      --bg: #faf4ef;
+      --bg-2: #fff7f2;
+      --surface: #ffffff;
+      --line: #eddcd3;
+      --gold: #c45c6e;
+      --gold-2: #e08a98;
+      --gold-dim: rgba(196, 92, 110, 0.12);
+      --text: #3a2a2c;
+      --muted: #8a7370;
+      --soft: #5c4a48;
+      --danger: #b44a4a;
+      --radius: 16px;
+      --header: 56px;
+      --sticky: 68px;
+      --max: 1120px;
+      --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+      --sans: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--sans);
+      background:
+        radial-gradient(1100px 520px at 8% -8%, rgba(232, 164, 176, 0.35), transparent 58%),
+        radial-gradient(900px 420px at 100% 0%, rgba(179, 155, 201, 0.22), transparent 52%),
+        radial-gradient(800px 360px at 80% 85%, rgba(127, 157, 136, 0.10), transparent 55%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      font-size: 16px;
+      min-height: 100vh;
+      padding-bottom: calc(var(--sticky) + 16px + env(safe-area-inset-bottom));
+    }
+    a { color: inherit; }
+    button, input { font: inherit; }
+    img, svg { display: block; }
+    .wrap { width: min(var(--max), calc(100% - 32px)); margin: 0 auto; }
+
+    /* Demo banner */
+    .banner {
+      background: linear-gradient(90deg, #f3d5dc, #f8e4d8 42%, #e6d7ef);
+      color: #6a3a44;
+      font-size: 12.5px;
+      letter-spacing: 0.02em;
+      text-align: center;
+      padding: 8px 36px 8px 12px;
+      position: relative;
+      border-bottom: 1px solid rgba(196, 92, 110, 0.22);
+    }
+    .banner[hidden] { display: none; }
+    .banner button {
+      position: absolute;
+      right: 8px; top: 50%; transform: translateY(-50%);
+      background: none; border: 0; color: #6a3a44;
+      width: 28px; height: 28px; cursor: pointer; font-size: 18px; line-height: 1;
+    }
+
+    /* Header */
+    header.top {
+      position: sticky; top: 0; z-index: 40;
+      height: var(--header);
+      background: rgba(250, 244, 239, 0.88);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+      display: flex; align-items: center;
+    }
+    .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .brand {
+      display: flex; align-items: center; gap: 10px; text-decoration: none;
+    }
+    .brand svg { width: 36px; height: 36px; flex: none; }
+    .brand-name { font-family: var(--serif); font-size: 1.05rem; letter-spacing: 0.01em; }
+    .brand-name span { color: var(--gold); }
+    nav.desk { display: none; gap: 18px; font-size: 13.5px; color: var(--soft); }
+    nav.desk a { text-decoration: none; }
+    nav.desk a:hover { color: var(--gold-2); }
+    .call-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--gold-2); text-decoration: none; font-size: 13.5px; font-weight: 600;
+      border: 1px solid rgba(196, 92, 110, 0.35);
+      padding: 6px 10px; border-radius: 999px;
+    }
+
+    /* Hero + first screen */
+    .hero {
+      padding: 20px 0 8px;
+    }
+    .hero-grid {
+      display: grid;
+      gap: 22px;
+    }
+    .kicker {
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    h1 {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: clamp(1.7rem, 6vw, 2.55rem);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+    .tagline { color: var(--soft); margin: 10px 0 16px; max-width: 36ch; }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 10px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      border: 0; border-radius: 999px; cursor: pointer; text-decoration: none;
+      font-weight: 650; letter-spacing: 0.01em;
+      padding: 12px 18px;
+    }
+    .btn-gold { background: linear-gradient(180deg, #e08a98, #c45c6e); color: #fffaf7; }
+    .btn-gold:hover { filter: brightness(1.06); }
+    .btn-ghost {
+      background: #fff; color: var(--text);
+      border: 1px solid var(--line);
+    }
+    .hint { margin-top: 10px; font-size: 12.5px; color: var(--muted); }
+    .hero-aside { display: none; }
+
+    /* Panels */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .panel h2 {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      padding: 12px 14px 0;
+    }
+    .note {
+      font-size: 11.5px;
+      color: var(--muted);
+      padding: 4px 14px 10px;
+    }
+
+    /* Services */
+    .services { list-style: none; }
+    .services li {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: baseline;
+      padding: 9px 14px;
+      border-top: 1px solid var(--line);
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .services li:first-child { border-top: 0; }
+    .services li.cat {
+      cursor: default;
+      background: #fff6f3;
+      box-shadow: none;
+      padding-top: 8px; padding-bottom: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    .services li.cat:hover { background: #fff6f3; }
+    .services li:hover { background: var(--gold-dim); }
+    .services li[aria-pressed="true"] {
+      background: var(--gold-dim);
+      box-shadow: inset 3px 0 0 var(--gold);
+    }
+    .services .name { font-weight: 600; font-size: 15px; }
+    .services .dur { color: var(--muted); font-size: 12px; font-weight: 400; margin-left: 6px; }
+    .services .price { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--gold-2); }
+
+    /* Slots */
+    .slots-block { margin-top: 12px; }
+    .slots-block h2 { padding-bottom: 4px; }
+    .branch-slots { padding: 8px 14px 12px; border-top: 1px solid var(--line); }
+    .branch-slots:first-of-type { border-top: 0; }
+    .branch-meta {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+      margin-bottom: 8px; font-size: 13.5px;
+    }
+    .branch-meta strong { font-weight: 700; }
+    .branch-meta .open { color: var(--muted); font-size: 12px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      border: 1px solid rgba(196, 92, 110, 0.4);
+      background: #fff;
+      color: var(--text);
+      border-radius: 999px;
+      padding: 6px 11px;
+      font-size: 13px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      cursor: pointer;
+    }
+    .chip:hover, .chip[aria-pressed="true"] {
+      background: var(--gold);
+      color: #fffaf7;
+      border-color: var(--gold);
+    }
+    .chip.ghost { border-style: dashed; color: var(--muted); border-color: var(--line); cursor: default; }
+    .chip.taken {
+      opacity: 0.5;
+      text-decoration: line-through;
+      border-style: dashed;
+      cursor: default;
+      pointer-events: none;
+    }
+    .empty-slots { color: var(--muted); font-size: 13px; }
+
+    /* Branches */
+    section { padding: 36px 0; }
+    section h2.sec {
+      font-family: var(--serif);
+      font-size: 1.6rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .lede { color: var(--muted); margin-bottom: 18px; max-width: 50ch; }
+    .branch-grid {
+      display: grid;
+      gap: 12px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .card h3 { font-family: var(--serif); font-size: 1.25rem; margin-bottom: 6px; }
+    .card p { color: var(--soft); font-size: 14px; }
+    .card .hours { color: var(--muted); font-size: 13px; margin: 6px 0 12px; }
+    .card-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .btn-sm { padding: 8px 12px; font-size: 13px; font-weight: 650; }
+    .btn-line {
+      background: transparent; color: var(--text);
+      border: 1px solid var(--line); border-radius: 999px;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+    }
+
+    /* Reviews, about, gallery */
+    .reviews { display: grid; gap: 12px; }
+    blockquote.card { margin: 0; }
+    blockquote.card p { font-size: 14.5px; color: var(--text); }
+    .stars { color: var(--gold); letter-spacing: 1px; font-size: 13px; margin-bottom: 6px; }
+    .who { color: var(--muted); font-size: 12.5px; margin-top: 10px; }
+    .about p { color: var(--soft); max-width: 62ch; }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .tile {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background:
+        radial-gradient(circle at 30% 20%, rgba(196,92,110,0.16), transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(179,155,201,0.14), transparent 48%),
+        var(--bg-2);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+      color: var(--gold-2);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .tile svg { width: 36px; height: 36px; stroke: var(--gold); fill: none; stroke-width: 1.4; }
+
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 28px 0 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    footer .brand-name { color: var(--text); margin-bottom: 4px; }
+    footer a { color: var(--soft); }
+    .fine { margin-top: 14px; font-size: 11.5px; color: var(--muted); max-width: 70ch; }
+
+    /* Sticky book bar (mobile) */
+    .sticky-bar {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 45;
+      background: rgba(255, 250, 247, 0.94);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid var(--line);
+      padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sticky-bar .msg { flex: 1; font-size: 12.5px; color: var(--soft); line-height: 1.3; }
+    .sticky-bar .msg strong { display: block; color: var(--text); font-size: 13.5px; }
+    .sticky-bar .btn { padding: 11px 16px; }
+
+    /* Chat */
+    .fab {
+      position: fixed; z-index: 50;
+      right: 16px;
+      bottom: calc(var(--sticky) + 16px + env(safe-area-inset-bottom));
+      width: 56px; height: 56px; border-radius: 50%;
+      border: 0; cursor: pointer;
+      background: linear-gradient(180deg, #e08a98, #c45c6e);
+      color: #fffaf7;
+      box-shadow: 0 8px 24px rgba(196, 92, 110, 0.28);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .fab[aria-expanded="true"] { display: none; }
+    .fab svg { width: 26px; height: 26px; }
+    .chat {
+      position: fixed; z-index: 60;
+      right: 12px;
+      bottom: calc(var(--sticky) + 12px + env(safe-area-inset-bottom));
+      width: min(380px, calc(100vw - 24px));
+      height: min(560px, calc(100vh - var(--sticky) - 80px));
+      background: #fffaf8;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 16px 40px rgba(90, 50, 60, 0.14);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .chat[hidden] { display: none; }
+    .chat-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 14px;
+      background: #fff4f0;
+      border-bottom: 1px solid var(--line);
+    }
+    .chat-head strong { display: block; font-size: 14px; }
+    .chat-head span { color: var(--muted); font-size: 11.5px; }
+
+    .chat-head .ai-label {
+      display: none;
+      color: var(--gold);
+      font-size: 10.5px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    .chat-head .ai-label.on { display: block; }
+    .bubble.thinking {
+      color: var(--muted);
+      font-style: italic;
+      font-weight: 400;
+    }
+    .bubble.thinking .dots {
+      display: inline-block;
+      min-width: 1.1em;
+      animation: typingDots 1.2s steps(3, end) infinite;
+    }
+    @keyframes typingDots {
+      0% { opacity: 0.25; }
+      50% { opacity: 1; }
+      100% { opacity: 0.25; }
+    }
+
+    .icon-btn {
+      background: none; border: 0; color: var(--soft); cursor: pointer;
+      width: 32px; height: 32px; font-size: 20px;
+    }
+    .msgs {
+      flex: 1; overflow-y: auto; padding: 14px 12px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .bubble {
+      max-width: 88%;
+      padding: 8px 11px;
+      border-radius: 14px;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .bubble.bot { background: #fff; border: 1px solid var(--line); align-self: flex-start; border-bottom-left-radius: 4px; }
+    .bubble.user { background: var(--gold); color: #fffaf7; align-self: flex-end; border-bottom-right-radius: 4px; font-weight: 600; }
+    .bubble .sum { margin-top: 6px; font-size: 13px; color: var(--soft); }
+    .bubble .sum b { color: var(--text); font-weight: 650; }
+    .replies { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 12px 8px; }
+    .replies button {
+      border: 1px solid rgba(196, 92, 110, 0.35);
+      background: #fff; color: var(--text);
+      border-radius: 999px; padding: 7px 11px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+    }
+    .replies button:hover { background: var(--gold-dim); }
+    .booked-card {
+      align-self: stretch;
+      max-width: 100%;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .booked-card h3 {
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: 1.45rem;
+      color: var(--gold-2);
+      margin-bottom: 2px;
+    }
+    .booked-card .notified { color: var(--soft); font-size: 13.5px; margin-bottom: 12px; }
+    .booked-card dl { margin: 0; display: grid; grid-template-columns: 7.5em 1fr; gap: 5px 8px; font-size: 13.5px; }
+    .booked-card dt { color: var(--muted); }
+    .booked-card dd { margin: 0; }
+    .booked-card .pay { color: var(--muted); font-weight: 500; }
+    .booked-card .ref { font-variant-numeric: tabular-nums; letter-spacing: 0.04em; font-weight: 700; }
+    .booked-card.cancelled h3 { color: var(--soft); }
+    .booked-card.updated h3 { color: var(--gold-2); }
+    .booked-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .booked-actions .btn { padding: 9px 14px; font-size: 13px; }
+    .composer {
+      display: flex; gap: 8px; padding: 10px 12px;
+      border-top: 1px solid var(--line);
+      background: #fff4f0;
+    }
+    .composer input {
+      flex: 1; background: #fff; border: 1px solid var(--line);
+      color: var(--text); border-radius: 999px; padding: 9px 12px; outline: none;
+    }
+    .composer input:focus { border-color: var(--gold); }
+    .composer button {
+      background: var(--gold); color: #fffaf7; border: 0;
+      border-radius: 999px; padding: 0 14px; font-weight: 700; cursor: pointer;
+    }
+
+
+    @media (max-width: 859px) {
+      .fab { display: none; }
+      .banner {
+        font-size: 12px;
+        padding: 6px 32px 6px 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      header.top { height: 52px; }
+      .brand svg { width: 32px; height: 32px; }
+      .hero { padding: 10px 0 0; }
+      .hero-grid { gap: 12px; }
+      h1 { font-size: 1.58rem; }
+      .tagline { font-size: 13.5px; margin: 6px 0 10px; max-width: none; }
+      .hint { display: none; }
+      .cta-row { gap: 8px; }
+      .btn { padding: 10px 16px; }
+      .panel h2 { padding: 8px 12px 0; }
+      .note { padding: 2px 12px 6px; font-size: 11px; }
+      .services li { padding: 6px 12px; }
+      .services .name { font-size: 14px; }
+      .slots-block { margin-top: 8px; }
+      .branch-slots { padding: 6px 12px 8px; }
+      .branch-meta { margin-bottom: 5px; }
+      .branch-meta .open { display: none; }
+      .chip { padding: 5px 10px; font-size: 12.5px; }
+      .note { display: none; }
+      .kicker { margin-bottom: 4px; }
+    }
+
+    @media (min-width: 860px) {
+      body { padding-bottom: 24px; }
+      .sticky-bar { display: none; }
+      .fab { bottom: 24px; }
+      .chat { bottom: 24px; right: 24px; height: min(620px, calc(100vh - 48px)); }
+      nav.desk { display: flex; }
+      .hero { padding: 28px 0 12px; }
+      .hero-grid { grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+      .branch-grid, .reviews { grid-template-columns: repeat(3, 1fr); }
+      .services { display: grid; grid-template-columns: 1fr 1fr; }
+      .services li.cat { grid-column: 1 / -1; }
+      .hero-aside {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        margin-top: 26px;
+      }
+      .trust-strip {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 8px 10px;
+        color: var(--soft);
+        font-size: 13.5px;
+        font-weight: 600;
+      }
+      .trust-strip .stars { color: var(--gold-2); letter-spacing: 0.04em; }
+      .trust-strip .demo-data {
+        color: var(--muted);
+        font-size: 11.5px;
+        font-weight: 500;
+      }
+      .benefits {
+        list-style: none;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .benefits li {
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px 11px;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.3;
+        color: var(--text);
+      }
+      .benefits svg {
+        flex: 0 0 auto;
+        width: 20px;
+        height: 20px;
+        margin-top: 1px;
+      }
+      .hero-quote {
+        margin: 0;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px 14px 12px 14px;
+        box-shadow: inset 3px 0 0 var(--gold);
+      }
+      .hero-quote p {
+        font-family: var(--serif);
+        font-size: 15px;
+        line-height: 1.4;
+        color: var(--text);
+        margin: 0 0 8px;
+      }
+      .hero-quote cite {
+        display: block;
+        font-style: normal;
+        font-size: 12.5px;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .hero-open {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px 12px;
+      }
+      .open-line {
+        margin: 0;
+        color: var(--soft);
+        font-size: 13.5px;
+        font-weight: 600;
+      }
+      .open-line .dot {
+        display: inline-block;
+        width: 7px; height: 7px;
+        border-radius: 50%;
+        background: #7dba6a;
+        margin-right: 7px;
+        vertical-align: 1px;
+      }
+      .open-line.closed .dot { background: var(--muted); }
+      .hero-open .btn { padding: 9px 14px; font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="banner" id="demoBanner">
+    <span id="bannerText">Demo — this could be your salon</span>
+    <button type="button" aria-label="Dismiss demo notice" id="dismissBanner">&times;</button>
+  </div>
+
+  <header class="top">
+    <div class="wrap">
+      <a class="brand" href="#top" id="top">
+        <svg viewBox="0 0 36 36" aria-hidden="true">
+          <circle cx="18" cy="18" r="16.5" fill="none" stroke="var(--gold)" stroke-width="1.35"/>
+          <path d="M18 10c2.2 2.4 3 5 3 7.2 0 3-1.3 5.3-3 6.8-1.7-1.5-3-3.8-3-6.8 0-2.2.8-4.8 3-7.2z" fill="none" stroke="var(--gold-2)" stroke-width="1.3" stroke-linejoin="round"/>
+          <path d="M11.2 16.2c3 0 5.6 1.4 7 3.8 1.2 2.2 1.2 4.6.4 6.4-2.2-1-4.8-2.2-6.8-4.6-1.6-2-2-4.2-.6-5.6z" fill="none" stroke="var(--gold)" stroke-width="1.25" stroke-linejoin="round"/>
+          <path d="M24.8 16.2c-3 0-5.6 1.4-7 3.8-1.2 2.2-1.2 4.6-.4 6.4 2.2-1 4.8-2.2 6.8-4.6 1.6-2 2-4.2.6-5.6z" fill="none" stroke="var(--gold)" stroke-width="1.25" stroke-linejoin="round"/>
+          <circle cx="18" cy="20.2" r="1.5" fill="var(--gold-2)"/>
+        </svg>
+        <div class="brand-name" id="brandName">Liora <span>Studio</span></div>
+      </a>
+      <nav class="desk" aria-label="Primary">
+        <a href="#services">Services</a>
+        <a href="#slots">Times</a>
+        <a href="#branches">Branches</a>
+        <a href="#reviews">Reviews</a>
+      </nav>
+      <a class="call-link" id="callLink" href="tel:+35600001111">Call &nbsp;0000 1111</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" aria-label="Book a visit">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="kicker" id="kicker">Sliema · St Julian’s · Valletta</p>
+          <h1 id="headline">Prices up front.<br>Book in two taps.</h1>
+          <p class="tagline" id="tagline">See the price, pick a time, you’re in.</p>
+          <div class="cta-row">
+            <button class="btn btn-gold" type="button" id="bookNow">Book now</button>
+            <a class="btn btn-ghost" id="callShop" href="tel:+35600001111">Call the salon</a>
+          </div>
+          <p class="hint" id="hint">Tap a service, then a time. Or book in the chat — it only takes a minute.</p>
+          <div class="hero-aside" id="heroAside">
+            <p class="trust-strip" id="trustStrip"></p>
+            <ul class="benefits" id="benefitList"></ul>
+            <blockquote class="hero-quote" id="heroQuote"></blockquote>
+            <div class="hero-open">
+              <p class="open-line" id="openToday"></p>
+              <button class="btn btn-ghost" type="button" id="heroChat">Chat with our assistant</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel" id="services">
+            <h2 id="servicesTitle">Services &amp; prices</h2>
+            <p class="note" id="pricesNote">Example prices for this demo — a real salon would show its own.</p>
+            <ul class="services" id="serviceList"></ul>
+          </div>
+          <div class="panel slots-block" id="slots">
+            <h2 id="slotsHeading">Next free slots today</h2>
+            <p class="note" id="slotsNote">Demo availability — not a live calendar</p>
+            <div id="slotRows"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="branches">
+      <div class="wrap">
+        <h2 class="sec" id="branchesTitle">Three studios, one number</h2>
+        <p class="lede" id="branchesLede">Pick the closest chair. Call or open maps.</p>
+        <div class="branch-grid" id="branchCards"></div>
+      </div>
+    </section>
+
+    <section id="reviews">
+      <div class="wrap">
+        <h2 class="sec" id="reviewsTitle">What clients say</h2>
+        <p class="lede" id="reviewsLede">Short and useful — the kind of reviews people actually read.</p>
+        <div class="reviews" id="reviewList"></div>
+      </div>
+    </section>
+
+    <section class="about" id="about">
+      <div class="wrap">
+        <h2 class="sec" id="aboutTitle">The salon</h2>
+        <p id="aboutText">Liora Studio is a fictional Malta beauty house built for this demo: hair colour and cuts, gel and BIAB nails, lash lifts and brow laminations, with prices on the first screen and a chair you can hold in two taps.</p>
+        <div class="gallery" aria-hidden="true">
+          <div class="tile">
+            <svg viewBox="0 0 36 36"><circle cx="10" cy="10" r="3.5"/><circle cx="26" cy="10" r="3.5"/><path d="M10 13.5 16 28m10-14.5L20 28M16 28h4"/></svg>
+            Cuts
+          </div>
+          <div class="tile">
+            <svg viewBox="0 0 36 36"><path d="M8 26c6-14 14-14 20 0"/><path d="M12 22h12"/><path d="M18 8v6"/></svg>
+            Shaves
+          </div>
+          <div class="tile">
+            <svg viewBox="0 0 36 36"><rect x="8" y="16" width="20" height="10" rx="1.5"/><path d="M12 16V12a6 6 0 0 1 12 0v4"/></svg>
+            The chair
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="brand-name" id="footerName">Liora Studio</div>
+      <p id="footerBlurb">A demo website for Malta beauty salons, nail studios and lash bars. Phone <a id="footerPhone" href="tel:+35600001111">+356 0000 1111</a></p>
+      <p class="fine" id="footerFine">This is a pitch mockup, not a live salon. Names, addresses, prices and times are examples. Bookings stay on this page — nothing is charged, and you pay in the salon.</p>
+    </div>
+  </footer>
+
+  <div class="sticky-bar">
+    <div class="msg" id="stickyMsg"><strong>Ready to book?</strong> Service, time, done.</div>
+    <button class="btn btn-gold" type="button" id="stickyBook">Book</button>
+  </div>
+
+  <button class="fab" type="button" id="chatFab" aria-label="Open booking chat" aria-expanded="false" aria-controls="chat">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 19V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H8l-4 4z"/></svg>
+  </button>
+
+  <div class="chat" id="chat" hidden role="dialog" aria-labelledby="chatTitle">
+    <div class="chat-head">
+      <div>
+        <strong id="chatTitle">Booking assistant</strong>
+        <span id="aiLabel" class="ai-label">AI assistant</span>
+        <span id="chatSubtitle">Demo chat — no live calendar</span>
+      </div>
+      <button class="icon-btn" type="button" id="chatClose" aria-label="Close chat">&times;</button>
+    </div>
+    <div class="msgs" id="msgs"></div>
+    <div class="replies" id="replies"></div>
+    <form class="composer" id="composer">
+      <input id="chatInput" type="text" autocomplete="name" placeholder="Type a reply…" aria-label="Message the assistant">
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script>
+  (function () {
+    const C = CONFIG;
+    const SERVICES = C.services;
+    const BRANCHES = C.branches.map(function (b) {
+      return Object.assign({}, b, {
+        start: b.openHour,
+        end: b.closeHour,
+        open: b.openDays
+      });
+    });
+
+    function digits(s) { return String(s || "").replace(/\D/g, ""); }
+    function telHref() { return "tel:" + digits(C.phone); }
+    const TEL = telHref();
+
+    function hexToRgb(hex) {
+      const h = String(hex || "").replace("#", "");
+      const full = h.length === 3 ? h.split("").map(function (c) { return c + c; }).join("") : h;
+      const n = parseInt(full, 16);
+      return [n >> 16 & 255, n >> 8 & 255, n & 255];
+    }
+
+    function setText(id, value, asHtml) {
+      const el = $(id);
+      if (!el || value == null) return;
+      if (asHtml) el.innerHTML = value;
+      else el.textContent = value;
+    }
+
+
+    function benefitIcon(name) {
+      const stroke = "var(--gold-2)";
+      const icons = {
+        tag: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.5 4.5h6v6L9.5 19.5 4.5 14.5z" fill="none" stroke="' + stroke + '" stroke-width="1.6" stroke-linejoin="round"/><circle cx="16" cy="8" r="1.1" fill="' + stroke + '"/><path d="M7 17.5 5.5 19" fill="none" stroke="' + stroke + '" stroke-width="1.6" stroke-linecap="round"/></svg>',
+        card: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="6.5" width="17" height="12" rx="2" fill="none" stroke="' + stroke + '" stroke-width="1.6"/><path d="M3.5 10.5h17" fill="none" stroke="' + stroke + '" stroke-width="1.6"/><path d="M7 15.5h4" fill="none" stroke="' + stroke + '" stroke-width="1.6" stroke-linecap="round"/></svg>',
+        check: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.25" fill="none" stroke="' + stroke + '" stroke-width="1.6"/><path d="M8.2 12.2 11 15l5-5.5" fill="none" stroke="' + stroke + '" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        calendar: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="15" rx="2" fill="none" stroke="' + stroke + '" stroke-width="1.6"/><path d="M3.5 9.5h17M8 3.5v4M16 3.5v4" fill="none" stroke="' + stroke + '" stroke-width="1.6" stroke-linecap="round"/><path d="M9 14.5h6" fill="none" stroke="' + stroke + '" stroke-width="1.6" stroke-linecap="round"/></svg>'
+      };
+      return icons[name] || icons.check;
+    }
+    function branchCloseHour(b, dow) {
+      const map = b.closeHourByDay || {};
+      if (map[dow] != null) return map[dow];
+      if (map[String(dow)] != null) return map[String(dow)];
+      return b.closeHour;
+    }
+    function openTodayLine() {
+      const aside = C.heroAside || {};
+      if (aside.hoursLine) return aside.hoursLine;
+      const now = maltaNow();
+      const openToday = BRANCHES.filter(function (b) {
+        return (b.openDays || []).indexOf(now.dow) !== -1;
+      });
+      if (!openToday.length) return { text: "Closed today", open: false };
+      const still = openToday.filter(function (b) {
+        const close = branchCloseHour(b, now.dow);
+        return now.hour < close;
+      });
+      if (!still.length) return { text: "Closed for today", open: false };
+      let latest = 0;
+      still.forEach(function (b) {
+        const c = branchCloseHour(b, now.dow);
+        if (c > latest) latest = c;
+      });
+      const until = String(latest).padStart(2, "0") + ":00";
+      return { text: "Open today until " + until, open: true };
+    }
+    function renderHeroAside() {
+      const aside = C.heroAside || {};
+      const trust = aside.trust || {};
+      const strip = $("trustStrip");
+      if (strip) {
+        const rating = trust.rating || "4.9";
+        const count = trust.countLabel || "120+ Google reviews";
+        const note = trust.note || "Demo data";
+        strip.innerHTML = '<span class="stars">★ ' + escapeHtml(rating) + "</span> · " + escapeHtml(count) + ' <span class="demo-data">' + escapeHtml(note) + "</span>";
+      }
+      const list = $("benefitList");
+      if (list) {
+        const items = aside.benefits || [];
+        list.innerHTML = items.map(function (it) {
+          return "<li>" + benefitIcon(it.icon) + "<span>" + escapeHtml(it.label) + "</span></li>";
+        }).join("");
+      }
+      const qel = $("heroQuote");
+      if (qel) {
+        const q = aside.quote || (C.reviews && C.reviews[0]) || {};
+        const text = q.text || "";
+        const who = q.who || "";
+        qel.innerHTML = text ? "<p>“" + escapeHtml(text) + "”</p>" + (who ? "<cite>" + escapeHtml(who) + "</cite>" : "") : "";
+        qel.hidden = !text;
+      }
+      const openEl = $("openToday");
+      if (openEl) {
+        const line = openTodayLine();
+        const text = typeof line === "string" ? line : line.text;
+        const isOpen = typeof line === "string" ? !/^closed/i.test(line) : !!line.open;
+        openEl.classList.toggle("closed", !isOpen);
+        openEl.innerHTML = '<span class="dot" aria-hidden="true"></span>' + escapeHtml(text);
+      }
+    }
+
+    function applyConfig() {
+      const col = C.colors || {};
+      const root = document.documentElement.style;
+      const map = { bg: "--bg", bg2: "--bg-2", surface: "--surface", line: "--line", gold: "--gold", gold2: "--gold-2", text: "--text", muted: "--muted", soft: "--soft" };
+      Object.keys(map).forEach(function (k) {
+        if (col[k]) root.setProperty(map[k], col[k]);
+      });
+      if (col.gold) {
+        const rgb = hexToRgb(col.gold);
+        root.setProperty("--gold-dim", "rgba(" + rgb.join(",") + ",0.14)");
+      }
+      document.title = C.metaTitle || C.name;
+      const meta = document.querySelector('meta[name="description"]');
+      if (meta && C.metaDescription) meta.setAttribute("content", C.metaDescription);
+
+      const banner = $("demoBanner");
+      if (banner) {
+        const show = C.demoBanner && C.demoBanner.show;
+        banner.hidden = !show;
+        setText("bannerText", C.demoBanner && C.demoBanner.text);
+      }
+
+      setText("brandName", C.brandHtml || C.name, true);
+      setText("footerName", C.name);
+      const kicker = C.kicker || BRANCHES.map(function (b) { return b.name; }).join(" · ");
+      setText("kicker", kicker);
+      setText("headline", C.headlineHtml, true);
+      setText("tagline", C.tagline);
+
+      const copy = C.copy || {};
+      setText("bookNow", copy.bookNow);
+      setText("callShop", copy.callShop);
+      setText("hint", copy.hint);
+      setText("servicesTitle", copy.servicesTitle);
+      setText("pricesNote", copy.pricesNote);
+      setText("slotsNote", copy.slotsNote);
+      setText("branchesTitle", copy.branchesTitle);
+      setText("branchesLede", copy.branchesLede);
+      setText("reviewsTitle", copy.reviewsTitle);
+      setText("reviewsLede", copy.reviewsLede);
+      setText("aboutTitle", copy.aboutTitle);
+      setText("aboutText", copy.about);
+      setText("chatTitle", C.chat && C.chat.title);
+      setText("chatSubtitle", C.chat && C.chat.subtitle);
+      setText("heroChat", C.heroAside && C.heroAside.chatButton);
+      renderHeroAside();
+      const aiLab = $("aiLabel");
+      if (aiLab) aiLab.classList.toggle("on", !!(C.aiEndpoint));
+
+      ["callLink", "callShop"].forEach(function (id) {
+        const el = $(id);
+        if (el) el.setAttribute("href", TEL);
+      });
+      if ($("callLink") && C.callLabel) $("callLink").textContent = C.callLabel;
+
+      const blurb = $("footerBlurb");
+      if (blurb) {
+        blurb.innerHTML = escapeHtml(copy.footerBlurb || "") +
+          " Phone <a id='footerPhone' href='" + TEL + "'>" + escapeHtml(C.phone) + "</a>";
+      }
+      setText("footerFine", copy.footerFine);
+
+      const list = $("reviewList");
+      if (list) {
+        list.innerHTML = (C.reviews || []).map(function (r) {
+          const stars = "★".repeat(r.stars || 5);
+          return "<blockquote class='card'>" +
+            "<div class='stars' aria-label='" + (r.stars || 5) + " stars'>" + stars + "</div>" +
+            "<p>“" + escapeHtml(r.text) + "”</p>" +
+            "<p class='who'>" + escapeHtml(r.who) + "</p></blockquote>";
+        }).join("");
+      }
+    }
+
+    const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    function maltaNow() {
+      const parts = new Intl.DateTimeFormat("en-GB", {
+        timeZone: C.timeZone || "Europe/Malta",
+        year: "numeric", month: "2-digit", day: "2-digit",
+        hour: "2-digit", minute: "2-digit", weekday: "short",
+        hour12: false
+      }).formatToParts(new Date());
+      const g = (t) => parts.find((p) => p.type === t).value;
+      const weekdayMap = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+      return {
+        y: +g("year"), mo: +g("month"), d: +g("day"),
+        hour: +g("hour"), minute: +g("minute"),
+        dow: weekdayMap[g("weekday")],
+        weekday: g("weekday")
+      };
+    }
+
+    function addDays(now, n) {
+      const utc = Date.UTC(now.y, now.mo - 1, now.d + n);
+      const dt = new Date(utc);
+      return {
+        y: dt.getUTCFullYear(), mo: dt.getUTCMonth() + 1, d: dt.getUTCDate(),
+        dow: dt.getUTCDay()
+      };
+    }
+
+    function dateLabel(now, offset) {
+      const x = addDays(now, offset);
+      if (offset === 0) return "Today";
+      if (offset === 1) return "Tomorrow";
+      return DAYS[x.dow] + " " + x.d + " " + MONTHS[x.mo - 1];
+    }
+
+    function longDate(now, offset) {
+      const x = addDays(now, offset);
+      const dayName = offset === 0 ? "Today" : offset === 1 ? "Tomorrow" : DAYS[x.dow];
+      return dayName + ", " + x.d + " " + MONTHS[x.mo - 1];
+    }
+
+    function hash(s) {
+      let h = 0;
+      for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+      return h;
+    }
+
+    function place() { return C.placeWord || "salon"; }
+    function staffLbl() { return C.staffLabel || "Stylist"; }
+    function barbersForBranch(branchId) {
+      const kn = C.knowledge && Array.isArray(C.knowledge.branches) ? C.knowledge.branches : [];
+      const br = brById(branchId);
+      const row = kn.find(function (x) {
+        return x && (x.id === branchId || (br && x.name === br.name));
+      });
+      const list = (row && (row.staff || row.stylists || row.barbers)) || [];
+      return (Array.isArray(list) ? list : []).filter(function (x) { return x && x.name; });
+    }
+    function barberFirstName(barber) {
+      if (!barber || !barber.name) return "";
+      return String(barber.name).trim().split(/\s+/)[0];
+    }
+    function staffPoolForService(branchId, serviceId) {
+      const list = barbersForBranch(branchId);
+      if (!list.length) return list;
+      const s = svcById(serviceId || state.service);
+      const hay = ((s && (s.category || s.name)) || "").toLowerCase();
+      let key = "";
+      if (/nail|manicure|biab|acrylic|pedicure/.test(hay)) key = "nail";
+      else if (/lash|brow|tint|lamination/.test(hay)) key = "lash|brow";
+      else if (/facial|wax|skin/.test(hay)) key = "facial|wax";
+      else if (/cut|blow|colour|color|highlight|balayage|hair/.test(hay)) key = "cut|colour|color|highlight|balayage|blow";
+      if (!key) return list;
+      const re = new RegExp(key);
+      const matched = list.filter(function (p) { return re.test(String(p.specialties || "").toLowerCase()); });
+      return matched.length ? matched : list;
+    }
+    function barberForSlot(branchId, stamp, time, serviceId) {
+      const list = staffPoolForService(branchId, serviceId);
+      if (!list.length) return null;
+      const i = hash(String(branchId || "") + "|" + String(stamp || "") + "|" + String(time || "") + "|" + String(serviceId || state.service || "")) % list.length;
+      return list[i];
+    }
+    function assignedBarber() {
+      if (!state.branch || !state.time || state.dayOffset == null) return null;
+      return barberForSlot(state.branch, dateStamp(maltaNow(), state.dayOffset), state.time, state.service);
+    }
+    function nameAskHtml() {
+      const b = brById(state.branch);
+      const first = barberFirstName(assignedBarber());
+      const whenWord = state.dayOffset === 0 ? "today" : state.dayOffset === 1 ? "tomorrow" : longDate(maltaNow(), state.dayOffset);
+      const withBarber = first ? " is available with " + escapeHtml(first) : " is available";
+      const place = b ? " at " + escapeHtml(b.name) : "";
+      return "The <b>" + escapeHtml(state.time) + "</b> slot you selected " + escapeHtml(whenWord) + place + withBarber + ". Could you please give me your name so we can proceed with your reservation?";
+    }
+    function slotAvailableHtml(askService) {
+      const b = brById(state.branch);
+      const first = barberFirstName(assignedBarber());
+      const whenWord = state.dayOffset === 0 ? "today" : state.dayOffset === 1 ? "tomorrow" : longDate(maltaNow(), state.dayOffset);
+      const withBarber = first ? " is available with " + escapeHtml(first) : " is available";
+      const place = b ? " at " + escapeHtml(b.name) : "";
+      const lead = "The <b>" + escapeHtml(state.time) + "</b> slot you selected " + escapeHtml(whenWord) + place + withBarber + ".";
+      if (askService) return lead + " What would you like done?";
+      return lead;
+    }
+
+    function hourToMins(h) { return Math.round(Number(h) * 60); }
+    function timeToMins(t) {
+      const p = String(t || "0:0").split(":").map(Number);
+      return (p[0] || 0) * 60 + (p[1] || 0);
+    }
+    function minsToTime(n) {
+      const h = Math.floor(n / 60), m = n % 60;
+      return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
+    }
+    function serviceDurationMins(serviceId, fallback) {
+      const s = svcById(serviceId || state.service);
+      if (s && s.mins) return s.mins;
+      return fallback != null ? fallback : 30;
+    }
+    function closeMinsFor(branch, dateObj) {
+      if (branch.closeHourByDay) {
+        const v = branch.closeHourByDay[dateObj.dow];
+        if (v == null) {
+          const s = branch.closeHourByDay[String(dateObj.dow)];
+          if (s != null) return hourToMins(s);
+        } else return hourToMins(v);
+      }
+      return hourToMins(branch.end != null ? branch.end : branch.closeHour);
+    }
+    function openMinsFor(branch) {
+      return hourToMins(branch.start != null ? branch.start : branch.openHour);
+    }
+    function overlapsBooking(branchId, stamp, start, end, exceptRef) {
+      return loadBookings().some(function (b) {
+        if (b.branch !== branchId || b.stamp !== stamp) return false;
+        if (exceptRef && b.ref === exceptRef) return false;
+        const bs = timeToMins(b.time);
+        const be = bs + (b.mins || 30);
+        return start < be && end > bs;
+      });
+    }
+    function candidateTimes(branch, dateObj, dur) {
+      const start = openMinsFor(branch);
+      const end = closeMinsFor(branch, dateObj);
+      const length = dur != null ? dur : serviceDurationMins();
+      const times = [];
+      let t = start;
+      if (t % 30) t += (30 - t % 30);
+      for (; t + length <= end; t += 30) times.push(minsToTime(t));
+      return times;
+    }
+
+    const STORE_KEY = "barberDemo.bookings." + String(C.name || "demo").toLowerCase().replace(/\s+/g, "-");
+
+    function loadBookings() {
+      try {
+        const raw = localStorage.getItem(STORE_KEY);
+        const list = raw ? JSON.parse(raw) : [];
+        return Array.isArray(list) ? list : [];
+      } catch (e) { return []; }
+    }
+    function saveBookings(list) {
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(list)); } catch (e) {}
+    }
+    function bookingsPayload() {
+      return loadBookings().map(function (b) {
+        return {
+          ref: b.ref,
+          name: b.name,
+          phone: b.phone || "",
+          email: b.email || "",
+          branch: b.branchName || b.branch,
+          service: b.service,
+          date: b.stamp,
+          time: b.time,
+          when: b.when,
+          barber: b.barberFirst || (b.barber ? String(b.barber).split(/\s+/)[0] : "")
+        };
+      });
+    }
+    function normalizePhone(raw) {
+      const compact = String(raw || "").trim().replace(/[\s().-]/g, "");
+      if (/^\+356\d{8}$/.test(compact)) return compact;
+      if (/^00356\d{8}$/.test(compact)) return "+356" + compact.slice(5);
+      if (/^356\d{8}$/.test(compact)) return "+" + compact;
+      if (/^\d{8}$/.test(compact)) return "+356" + compact;
+      return null;
+    }
+    function normalizeEmail(raw) {
+      const s = String(raw || "").trim();
+      if (!s || s.length > 80 || /\s/.test(s)) return null;
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s)) return null;
+      if (s.indexOf("..") !== -1) return null;
+      return s;
+    }
+    function normalizeRef(s) {
+      return String(s || "").toUpperCase().replace(/\s+/g, "").replace(/^#/, "");
+    }
+    function extractRef(raw) {
+      const m = String(raw || "").toUpperCase().match(/\b[A-Z]{2,3}-[A-Z0-9]{3,6}\b/);
+      return m ? m[0] : null;
+    }
+    function findBookingByRef(ref) {
+      const key = normalizeRef(ref);
+      if (!key) return null;
+      return loadBookings().find(function (b) { return normalizeRef(b.ref) === key; }) || null;
+    }
+    function findBookingsByQuery(query) {
+      const raw = String(query || "").trim();
+      const list = loadBookings();
+      if (!raw) return list.slice();
+      const ref = extractRef(raw) || (normalizeRef(raw).indexOf("-") !== -1 ? normalizeRef(raw) : null);
+      const phone = normalizePhone(raw);
+      const email = normalizeEmail(raw);
+      const nameQ = raw.toLowerCase();
+      return list.filter(function (b) {
+        if (ref && normalizeRef(b.ref) === normalizeRef(ref)) return true;
+        if (phone && b.phone && normalizePhone(b.phone) === phone) return true;
+        if (email && b.email && String(b.email).toLowerCase() === email.toLowerCase()) return true;
+        if (b.name && b.name.toLowerCase() === nameQ) return true;
+        if (b.name && nameQ.length >= 3 && !phone && !email && !ref && b.name.toLowerCase().indexOf(nameQ) !== -1) return true;
+        return false;
+      });
+    }
+    function extractLookup(raw) {
+      const text = String(raw || "").trim();
+      const ref = extractRef(text);
+      if (ref) return ref;
+      const phone = normalizePhone(text);
+      if (phone) return phone;
+      const email = normalizeEmail(text);
+      if (email) return email;
+      if (looksLikeName(text)) return text.replace(/\s+/g, " ");
+      return null;
+    }
+    function minutesUntilBooking(b) {
+      if (!b || !b.stamp || !b.time) return null;
+      const parts = b.stamp.split("-").map(Number);
+      const hm = b.time.split(":").map(Number);
+      const now = maltaNow();
+      return (Date.UTC(parts[0], parts[1] - 1, parts[2], hm[0], hm[1]) - Date.UTC(now.y, now.mo - 1, now.d, now.hour, now.minute)) / 60000;
+    }
+    function isLateCancel(b) {
+      const m = minutesUntilBooking(b);
+      return m != null && m < 120;
+    }
+    function shopPhoneHtml() {
+      const phone = C.phone || "";
+      const href = "tel:" + phone.replace(/\s/g, "");
+      return "<a href='" + escapeHtml(href) + "'>" + escapeHtml(phone) + "</a>";
+    }
+    function bookingWhenPhrase(b) {
+      if (!b) return "";
+      const now = maltaNow();
+      let off = null;
+      for (let i = -1; i <= 14; i++) {
+        if (dateStamp(now, i) === b.stamp) { off = i; break; }
+      }
+      const day = off === 0 ? "today" : off === 1 ? "tomorrow" : (b.when ? b.when.replace(/\s+at\s+.*$/, "") : b.stamp);
+      const barberFirst = b.barberFirst || (b.barber ? String(b.barber).split(/\s+/)[0] : "");
+      const svc = String(b.service || "appointment").toLowerCase();
+      let phrase = "your " + escapeHtml(svc) + " " + escapeHtml(day) + " at " + escapeHtml(b.time);
+      if (barberFirst) phrase += " with " + escapeHtml(barberFirst);
+      return phrase;
+    }
+    function setComposerMode(kind) {
+      const input = $("chatInput");
+      if (!input) return;
+      if (kind === "tel") {
+        input.setAttribute("autocomplete", "tel");
+        input.setAttribute("inputmode", "tel");
+        input.placeholder = "Phone number…";
+      } else if (kind === "email") {
+        input.setAttribute("autocomplete", "email");
+        input.setAttribute("inputmode", "email");
+        input.placeholder = "Email address…";
+      } else if (kind === "name") {
+        input.setAttribute("autocomplete", "name");
+        input.setAttribute("inputmode", "text");
+        input.placeholder = "Your name…";
+      } else {
+        input.setAttribute("autocomplete", "off");
+        input.setAttribute("inputmode", "text");
+        input.placeholder = "Type a reply…";
+      }
+    }
+    function bookingCardHtml(kind, booking, notified) {
+      const title = kind === "cancelled" ? "Cancelled" : kind === "updated" ? "Updated" : "Booked ✓";
+      return "<h3>" + title + "</h3>" +
+        "<p class='notified'>" + escapeHtml(notified) + "</p>" +
+        "<dl>" +
+        "<dt>Name</dt><dd>" + escapeHtml(booking.name) + "</dd>" +
+        "<dt>Branch</dt><dd>" + escapeHtml(booking.branchName || booking.branch) + "</dd>" +
+        (booking.barber ? "<dt>" + escapeHtml(staffLbl()) + "</dt><dd>" + escapeHtml(booking.barber) + "</dd>" : "") +
+        "<dt>Service</dt><dd>" + escapeHtml(booking.service) + "</dd>" +
+        "<dt>Price</dt><dd>" + euro(booking.price) + " <span class='pay'>pay in shop</span></dd>" +
+        "<dt>When</dt><dd>" + escapeHtml(booking.when) + "</dd>" +
+        (booking.phone ? "<dt>Phone</dt><dd>" + escapeHtml(booking.phone) + "</dd>" : "") +
+        (booking.email ? "<dt>Email</dt><dd>" + escapeHtml(booking.email) + "</dd>" : "") +
+        "<dt>Reference</dt><dd class='ref'>" + escapeHtml(booking.ref) + "</dd>" +
+        "</dl>" +
+        (kind === "cancelled" ? "" : (
+          "<div class='booked-actions'>" +
+          "<button type='button' class='btn btn-gold' id='addCal'>Add to calendar</button>" +
+          "<button type='button' class='btn btn-ghost' id='cancelChange'>Cancel / change</button>" +
+          "</div>"
+        ));
+    }
+    function showStatusCard(kind, booking, notified, histText) {
+      const card = document.createElement("div");
+      card.className = "booked-card" + (kind === "cancelled" || kind === "updated" ? " " + kind : "");
+      card.innerHTML = bookingCardHtml(kind, booking, notified);
+      const gen = talkGen;
+      afterBot(async function () {
+        const ok = await finishTyping(histText, gen);
+        if (!ok) return;
+        replies.innerHTML = "";
+        msgs.appendChild(card);
+        history.push({ role: "assistant", text: histText });
+        msgs.scrollTop = msgs.scrollHeight;
+      });
+    }
+    function stampOf(dateObj) {
+      return dateObj.y + "-" + String(dateObj.mo).padStart(2, "0") + "-" + String(dateObj.d).padStart(2, "0");
+    }
+    function dateStamp(now, offset) { return stampOf(addDays(now, offset)); }
+    function isTaken(branchId, stamp, time, dur, exceptRef) {
+      const start = timeToMins(time);
+      const length = dur != null ? dur : serviceDurationMins();
+      return overlapsBooking(branchId, stamp, start, start + length, exceptRef);
+    }
+
+    function slotsFor(branch, now, offset, opts) {
+      opts = opts || {};
+      const dur = opts.duration != null ? opts.duration : serviceDurationMins();
+      const exceptRef = opts.exceptRef;
+      const dateObj = addDays(now, offset);
+      if (!branch.open.includes(dateObj.dow)) return [];
+      let list;
+      const pinned = branch.sampleSlots;
+      const dayPinned = pinned && !Array.isArray(pinned) ? pinned[dateObj.dow] : pinned;
+      if (Array.isArray(dayPinned) && dayPinned.length) {
+        list = dayPinned.slice();
+      } else {
+        const all = candidateTimes(branch, dateObj, dur);
+        const seed = hash(branch.id + "|" + dateObj.y + "-" + dateObj.mo + "-" + dateObj.d + "|" + dur);
+        const free = all.filter(function (_, i) { return ((seed >> (i % 16)) & 3) !== 0; });
+        list = free.length ? free : all.filter(function (_, i) { return i % 3 === 0; });
+      }
+      if (offset === 0) {
+        const nowMins = now.hour * 60 + now.minute + 20;
+        list = list.filter(function (tm) { return timeToMins(tm) >= nowMins; });
+      }
+      const stamp = stampOf(dateObj);
+      const endLimit = closeMinsFor(branch, dateObj);
+      return list.filter(function (tm) {
+        const start = timeToMins(tm);
+        if (start + dur > endLimit) return false;
+        return !overlapsBooking(branch.id, stamp, start, start + dur, exceptRef);
+      });
+    }
+
+    const state = {
+      service: null,
+      branch: null,
+      dayOffset: null,
+      time: null,
+      name: "",
+      phone: "",
+      email: "",
+      ref: "",
+      booking: null,
+      step: "branch",
+      pendingAction: null
+    };
+    let history = [];
+
+    const $ = (id) => document.getElementById(id);
+    const serviceList = $("serviceList");
+    const slotRows = $("slotRows");
+    const branchCards = $("branchCards");
+    const msgs = $("msgs");
+    const replies = $("replies");
+    const chat = $("chat");
+    const chatFab = $("chatFab");
+
+    function euro(n) { return (C.currency || "€") + n; }
+
+    function renderServices() {
+      const groups = [];
+      SERVICES.forEach(function (s) {
+        const cat = s.category || "";
+        if (!groups.length || groups[groups.length - 1].name !== cat) groups.push({ name: cat, items: [] });
+        groups[groups.length - 1].items.push(s);
+      });
+      serviceList.innerHTML = groups.map(function (g) {
+        const head = g.name ? "<li class='cat'>" + escapeHtml(g.name) + "</li>" : "";
+        return head + g.items.map(function (s) {
+          return "<li role='button' tabindex='0' data-id='" + s.id + "' aria-pressed='" + (state.service === s.id) + "'>" +
+            "<span class='name'>" + escapeHtml(s.name) + "<span class='dur'> · " + s.mins + " min</span></span>" +
+            "<span class='price'>" + euro(s.price) + "</span>" +
+          "</li>";
+        }).join("");
+      }).join("");
+    }
+
+    function renderSlots() {
+      const now = maltaNow();
+      let offset = 0;
+      let any = BRANCHES.some((b) => slotsFor(b, now, 0).length);
+      if (!any) { offset = (now.dow === 0) ? 1 : 1; any = true; }
+      const copy = C.copy || {};
+      $("slotsHeading").textContent = offset === 0
+        ? (copy.slotsTitleToday || "Next free slots today")
+        : (copy.slotsTitleOther || "Next free slots {day}").replace("{day}", dateLabel(now, offset).toLowerCase());
+      slotRows.innerHTML = BRANCHES.map((b) => {
+        const stamp = dateStamp(now, offset);
+        const free = slotsFor(b, now, offset);
+        const taken = loadBookings().filter(function (x) { return x.branch === b.id && x.stamp === stamp; }).map(function (x) { return x.time; });
+        const times = free.concat(taken).filter(function (tm, i, arr) { return arr.indexOf(tm) === i; }).sort();
+        const shown = times.slice(0, 4);
+        const chips = shown.length
+          ? shown.map(function (tm) {
+              const took = taken.indexOf(tm) !== -1;
+              if (took) return "<button type='button' class='chip taken' disabled aria-label='" + tm + " taken'>" + tm + "</button>";
+              return "<button type='button' class='chip' data-branch='" + b.id + "' data-day='" + offset + "' data-time='" + tm + "'>" + tm + "</button>";
+            }).join("")
+          : "<span class='empty-slots'>Closed or fully booked — try another branch.</span>";
+        return "<div class='branch-slots'>" +
+          "<div class='branch-meta'><strong>" + b.name + "</strong><span class='open'>" + b.hours + "</span></div>" +
+          "<div class='chips'>" + chips + "</div></div>";
+      }).join("");
+    }
+
+    function renderBranches() {
+      branchCards.innerHTML = BRANCHES.map((b) =>
+        "<article class='card'>" +
+          "<h3>" + b.name + "</h3>" +
+          "<p>" + b.address + "</p>" +
+          "<p class='hours'>" + b.hours + (b.closedLabel ? " · " + b.closedLabel : "") + "</p>" +
+          "<div class='card-actions'>" +
+            "<a class='btn btn-gold btn-sm' href='" + TEL + "'>Call</a>" +
+            "<a class='btn-line btn-sm' href='" + b.maps + "' target='_blank' rel='noopener'>Maps</a>" +
+          "</div></article>"
+      ).join("");
+    }
+
+    function updateSticky() {
+      const s = SERVICES.find((x) => x.id === state.service);
+      const b = BRANCHES.find((x) => x.id === state.branch);
+      const el = $("stickyMsg");
+      if (state.booking) {
+        el.innerHTML = "<strong>Booked ✓ · " + state.booking.ref + "</strong>Pay in the salon.";
+      } else if (s && b && state.time != null && state.dayOffset != null) {
+        el.innerHTML = "<strong>" + s.name + " · " + state.time + "</strong>" + b.name + ", " + dateLabel(maltaNow(), state.dayOffset);
+      } else if (s) {
+        el.innerHTML = "<strong>" + s.name + " selected</strong>Now pick a time — that’s tap two.";
+      } else {
+        const copy = C.copy || {};
+        el.innerHTML = "<strong>" + (copy.stickyReady || "Ready to book?") + "</strong>" + (copy.stickyHint || "Service, time, done.");
+      }
+    }
+
+    function svcById(id) { return SERVICES.find((s) => s.id === id); }
+    function brById(id) { return BRANCHES.find((b) => b.id === id); }
+
+    function openChat() {
+      chat.hidden = false;
+      chatFab.setAttribute("aria-expanded", "true");
+      $("chatInput").focus();
+    }
+    function closeChat() {
+      chat.hidden = true;
+      chatFab.setAttribute("aria-expanded", "false");
+    }
+
+    function addBubble(kind, html) {
+      const d = document.createElement("div");
+      d.className = "bubble " + kind;
+      d.innerHTML = html;
+      msgs.appendChild(d);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+    function stripHtml(html) {
+      return String(html).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    }
+    function userSay(text) {
+      addBubble("user", escapeHtml(text));
+      history.push({ role: "user", text: String(text) });
+    }
+    function setComposerVisible(show) {
+      const el = $("composer");
+      if (el) el.style.display = show ? "" : "none";
+    }
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+
+    let talkGen = 0;
+    let typingSince = 0;
+    let botChain = Promise.resolve();
+
+    function typingDelayMs(text) {
+      const n = stripHtml(text || "").length;
+      return Math.min(2000, Math.max(700, Math.round(800 + n * 16)));
+    }
+    function showTyping() {
+      if ($("thinking")) return;
+      const d = document.createElement("div");
+      d.className = "bubble bot thinking";
+      d.id = "thinking";
+      d.setAttribute("aria-live", "polite");
+      d.innerHTML = "typing<span class=\"dots\">…</span>";
+      msgs.appendChild(d);
+      msgs.scrollTop = msgs.scrollHeight;
+      typingSince = Date.now();
+    }
+    function hideTyping() {
+      const d = $("thinking");
+      if (d) d.remove();
+    }
+    function afterBot(fn) {
+      botChain = botChain.then(fn, fn);
+      return botChain;
+    }
+    async function finishTyping(text, gen) {
+      showTyping();
+      const wait = typingDelayMs(text) - (Date.now() - (typingSince || Date.now()));
+      if (wait > 0) await new Promise(function (r) { setTimeout(r, wait); });
+      if (gen != null && gen !== talkGen) return false;
+      hideTyping();
+      return true;
+    }
+    function resetTalk() {
+      talkGen += 1;
+      hideTyping();
+      typingSince = 0;
+      botChain = Promise.resolve();
+      return talkGen;
+    }
+
+    function botSay(html) {
+      const gen = talkGen;
+      return afterBot(async function () {
+        const ok = await finishTyping(html, gen);
+        if (!ok) return;
+        addBubble("bot", html);
+        history.push({ role: "assistant", text: stripHtml(html) });
+      });
+    }
+    function clearReplies() {
+      return afterBot(function () { replies.innerHTML = ""; });
+    }
+    function replyButtons(items) {
+      const list = items || [];
+      return afterBot(function () {
+        replies.innerHTML = "";
+        list.forEach(function (it) {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.textContent = it.label;
+          b.addEventListener("click", function () { handleReply(it.value, it.label); });
+          replies.appendChild(b);
+        });
+      });
+    }
+
+    function resetBooking(keepService) {
+      const svc = keepService ? state.service : null;
+      state.service = svc;
+      state.branch = null;
+      state.dayOffset = null;
+      state.time = null;
+      state.name = "";
+      state.phone = "";
+      state.email = "";
+      state.ref = "";
+      state.booking = null;
+      state.pendingAction = null;
+      state.step = "branch";
+      setComposerMode("");
+      setComposerVisible(true);
+      renderServices();
+      updateSticky();
+    }
+
+    function abortDraft(msg) {
+      resetBooking(false);
+      renderSlots();
+      state.step = "idle";
+      setComposerVisible(true);
+      setComposerMode("");
+      botSay(msg || "Of course — I've stopped that. If you'd like to book another time, or you need anything else, just let me know.");
+      clearReplies();
+    }
+    function noMatchReply() {
+      state.pendingAction = { type: "lookup", intent: (state.pendingAction && state.pendingAction.intent) || "cancel" };
+      return {
+        html: "I couldn't find a booking with those details. If you think that's a mistake, you're welcome to call the salon on " + shopPhoneHtml() + " and they'll help.",
+        replies: []
+      };
+    }
+    function askLookup(intent) {
+      state.pendingAction = { type: "lookup", intent: intent };
+      setComposerVisible(true);
+      setComposerMode("");
+      const verb = intent === "reschedule" ? "change" : "cancel";
+      return {
+        html: "Of course — I can help you " + verb + " a reservation. Could you please share the reference code, the name on the booking, or the phone or email you used?",
+        replies: [],
+        focus: true
+      };
+    }
+    function proposeCancel(b) {
+      if (!b) return noMatchReply();
+      state.pendingAction = { type: "cancel", ref: b.ref };
+      setComposerVisible(true);
+      return {
+        html: "Would you like me to cancel " + bookingWhenPhrase(b) + "?",
+        replies: [
+          { label: "Yes, please cancel", value: "cancel-yes:" + b.ref },
+          { label: "No, keep it", value: "cancel-no" }
+        ]
+      };
+    }
+    function executeCancel(ref, spoken) {
+      const b = findBookingByRef(ref);
+      state.pendingAction = null;
+      if (!b) {
+        botSay("I couldn't find that booking any more. If you need a hand, please call the salon on " + shopPhoneHtml() + ".");
+        clearReplies();
+        return;
+      }
+      saveBookings(loadBookings().filter(function (x) { return x.ref !== b.ref; }));
+      renderSlots();
+      if (state.booking && state.booking.ref === b.ref) {
+        state.booking = null;
+        state.ref = "";
+        state.step = "idle";
+      }
+      setComposerVisible(true);
+      setComposerMode("");
+      const late = isLateCancel(b);
+      const soft = " If you'd like to rebook another time, I'm happy to help.";
+      let msg;
+      if (spoken) {
+        msg = spoken;
+      } else if (late) {
+        msg = "I've noted the cancellation of " + bookingWhenPhrase(b) + ". Because it's within two hours of the appointment, it would help if you could also call the salon on " + shopPhoneHtml() + ", so they can try to fill the chair." + soft;
+      } else {
+        msg = "I've cancelled " + bookingWhenPhrase(b) + ". The slot is free again." + soft;
+      }
+      const notified = late
+        ? "We've noted the cancellation — please also call the salon"
+        : "The booking has been cancelled";
+      const hist = late
+        ? "Noted cancellation of " + b.ref + " (within 2 hours). Please call the salon. If you'd like to rebook another time, I'm happy to help."
+        : "Cancelled " + b.ref + ". The slot is free again. If you'd like to rebook another time, I'm happy to help.";
+      botSay(msg);
+      showStatusCard("cancelled", b, notified, hist);
+    }
+    function rescheduleSlots(b) {
+      const br = findBranch(b.branchName || b.branch) || brById(b.branch);
+      if (!br) return [];
+      const now = maltaNow();
+      const out = [];
+      for (let i = 0; i <= 4; i++) {
+        const stamp = dateStamp(now, i);
+        slotsFor(br, now, i, { duration: b.mins || serviceDurationMins(), exceptRef: b.ref }).forEach(function (tm) {
+          if (stamp === b.stamp && tm === b.time) return;
+          const barber = barberForSlot(br.id, stamp, tm, b.serviceId || state.service);
+          out.push({
+            label: dateLabel(now, i) + " " + tm,
+            value: "move|" + b.ref + "|" + stamp + "|" + tm,
+            stamp: stamp,
+            time: tm,
+            offset: i,
+            barber: barber
+          });
+        });
+        if (out.length >= 8) break;
+      }
+      return out.slice(0, 8);
+    }
+    function proposeReschedule(b) {
+      if (!b) return noMatchReply();
+      const slots = rescheduleSlots(b);
+      if (!slots.length) {
+        state.pendingAction = null;
+        return {
+          html: "I don't have another free time at " + escapeHtml(b.branchName || b.branch) + " in the next few days. You're welcome to call the salon on " + shopPhoneHtml() + ".",
+          replies: []
+        };
+      }
+      state.pendingAction = { type: "reschedule-pick", ref: b.ref };
+      return {
+        html: "Of course — I can move " + bookingWhenPhrase(b) + ". Which of these times would work better?",
+        replies: slots
+      };
+    }
+    function proposeMoveTo(b, stamp, time) {
+      const br = findBranch(b.branchName || b.branch) || brById(b.branch);
+      const now = maltaNow();
+      let off = null;
+      for (let i = 0; i <= 14; i++) {
+        if (dateStamp(now, i) === stamp) { off = i; break; }
+      }
+      if (off == null || !br || slotsFor(br, now, off, { duration: (b && b.mins) || serviceDurationMins(), exceptRef: b && b.ref }).indexOf(time) === -1) {
+        return { html: "That time isn't free. You can pick one of the times below.", replies: rescheduleSlots(b) };
+      }
+      const barber = barberForSlot(br.id, stamp, time);
+      const first = barberFirstName(barber);
+      const whenWord = off === 0 ? "today" : off === 1 ? "tomorrow" : longDate(now, off);
+      state.pendingAction = { type: "reschedule", ref: b.ref, date: stamp, time: time };
+      return {
+        html: "Shall I move " + bookingWhenPhrase(b).replace(/^your /, "your ") + " to <b>" + escapeHtml(time) + "</b> " + escapeHtml(whenWord) + (first ? ", with " + escapeHtml(first) : "") + "?",
+        replies: [
+          { label: "Yes, please move it", value: "move-yes|" + b.ref + "|" + stamp + "|" + time },
+          { label: "No, keep the original time", value: "move-no" }
+        ]
+      };
+    }
+    function executeReschedule(ref, stamp, time, spoken) {
+      const b = findBookingByRef(ref);
+      state.pendingAction = null;
+      if (!b) {
+        botSay("I couldn't find that booking any more. If you need a hand, please call the salon on " + shopPhoneHtml() + ".");
+        clearReplies();
+        return;
+      }
+      const br = findBranch(b.branchName || b.branch) || brById(b.branch);
+      const now = maltaNow();
+      let off = null;
+      for (let i = 0; i <= 14; i++) {
+        if (dateStamp(now, i) === stamp) { off = i; break; }
+      }
+      if (off == null || !br || slotsFor(br, now, off, { duration: (b && b.mins) || serviceDurationMins(), exceptRef: b && b.ref }).indexOf(time) === -1) {
+        applyReply({ html: "That time isn't free any more. You can pick one of the times below.", replies: rescheduleSlots(b) });
+        return;
+      }
+      const barber = barberForSlot(br.id, stamp, time);
+      const updated = Object.assign({}, b, {
+        branch: br.id,
+        branchName: br.name,
+        address: br.address,
+        stamp: stamp,
+        time: time,
+        when: longDate(now, off) + " at " + time,
+        barber: barber ? barber.name : "",
+        barberFirst: barberFirstName(barber)
+      });
+      const list = loadBookings().filter(function (x) { return x.ref !== b.ref; });
+      list.push(updated);
+      saveBookings(list);
+      renderSlots();
+      state.booking = updated;
+      state.ref = updated.ref;
+      state.branch = br.id;
+      state.dayOffset = off;
+      state.time = time;
+      state.step = "done";
+      setComposerVisible(true);
+      setComposerMode("");
+      const first = updated.barberFirst;
+      const msg = spoken || ("Of course — I've moved your " + escapeHtml(String(updated.service || "appointment").toLowerCase()) + " to <b>" + escapeHtml(time) + "</b> " + escapeHtml(off === 0 ? "today" : off === 1 ? "tomorrow" : longDate(now, off)) + (first ? ", with " + escapeHtml(first) : "") + ".");
+      botSay(msg);
+      showStatusCard("updated", updated, "Your reservation has been updated", "Updated " + updated.ref + " to " + updated.when + (first ? " with " + updated.barber : "") + ".");
+    }
+    function startManage(intent, raw) {
+      const lookup = extractLookup(raw);
+      let matches;
+      if (lookup) matches = findBookingsByQuery(lookup);
+      else if (state.booking && state.booking.ref && findBookingByRef(state.booking.ref)) matches = [findBookingByRef(state.booking.ref)];
+      else matches = loadBookings();
+      if (!matches.length) {
+        if (lookup) return noMatchReply();
+        if (!loadBookings().length) return {
+          html: "I couldn't find a booking on this device. If you booked under another name or phone, or you think this is a mistake, you're welcome to call the salon on " + shopPhoneHtml() + " and they'll help.",
+          replies: []
+        };
+        return askLookup(intent);
+      }
+      if (matches.length > 1) {
+        state.pendingAction = { type: "lookup", intent: intent };
+        return {
+          html: "I found more than one booking. Could you please share the reference, or the phone or email you used, so I can be sure I have the right one?",
+          replies: matches.slice(0, 4).map(function (b) {
+            return { label: (b.ref || "") + " · " + (b.time || ""), value: (intent === "reschedule" ? "rsv-pick:" : "cancel-pick:") + b.ref };
+          })
+        };
+      }
+      return intent === "reschedule" ? proposeReschedule(matches[0]) : proposeCancel(matches[0]);
+    }
+    function pendingLocalReply(raw) {
+      const t = String(raw || "").trim();
+      const pending = state.pendingAction;
+      if (!pending) return null;
+      const yes = /^(y|yes|yeah|yep|please|ok|okay|sure|confirm|do it|go ahead|please cancel|yes,? please( cancel| move( it)?)?)$/i.test(t) || /(yes,? please cancel|please cancel( it)?|yes,? move it)/i.test(t);
+      const no = /^(n|no|nope|don't|dont|keep it|never mind|stop)$/i.test(t) || /(no,? keep( it)?|don't cancel|do not cancel|keep the original)/i.test(t);
+      if (pending.type === "cancel") {
+        if (yes) return { action: "cancel", ref: pending.ref };
+        if (no) {
+          state.pendingAction = null;
+          return { html: "Of course — I'll leave " + bookingWhenPhrase(findBookingByRef(pending.ref)) + " as it is.", replies: [] };
+        }
+      }
+      if (pending.type === "reschedule" && pending.date && pending.time) {
+        if (yes) return { action: "reschedule", reschedule: { ref: pending.ref, date: pending.date, time: pending.time } };
+        if (no) {
+          const b = findBookingByRef(pending.ref);
+          state.pendingAction = { type: "reschedule-pick", ref: pending.ref };
+          return { html: "No problem — I'll keep the original time. Would you like to pick a different one?", replies: b ? rescheduleSlots(b) : [] };
+        }
+      }
+      if (pending.type === "reschedule-pick") {
+        const b = findBookingByRef(pending.ref);
+        if (!b) return noMatchReply();
+        const tm = (t.match(/\b(\d{1,2}:\d{2})\b/) || [])[1];
+        if (tm) {
+          const now = maltaNow();
+          const hh = tm.length === 4 ? "0" + tm : tm;
+          let stamp = b.stamp;
+          if (/tomorrow/.test(t.toLowerCase())) stamp = dateStamp(now, 1);
+          else if (/today/.test(t.toLowerCase())) stamp = dateStamp(now, 0);
+          else {
+            const slots = rescheduleSlots(b);
+            const hit = slots.find(function (s) { return s.time === hh && (s.label.toLowerCase().indexOf(t.toLowerCase()) !== -1 || true); });
+            // prefer a slot whose label is in the text, else first matching time
+            const labelled = slots.find(function (s) { return s.time === hh && t.toLowerCase().indexOf(s.label.toLowerCase()) !== -1; });
+            const byTime = slots.filter(function (s) { return s.time === hh; });
+            const chosen = labelled || (byTime.length === 1 ? byTime[0] : null);
+            if (chosen) return proposeMoveTo(b, chosen.stamp, chosen.time);
+            if (byTime.length) return proposeMoveTo(b, byTime[0].stamp, byTime[0].time);
+          }
+          return proposeMoveTo(b, stamp, hh);
+        }
+      }
+      if (pending.type === "lookup") {
+        const lookup = extractLookup(t);
+        if (lookup) return startManage(pending.intent || "cancel", lookup);
+      }
+      return null;
+    }
+
+    function startConversation(opts) {
+      opts = opts || {};
+      resetTalk();
+      history = [];
+      msgs.innerHTML = "";
+      replies.innerHTML = "";
+      setComposerVisible(true);
+      showTyping();
+      if (opts.fromSlot) {
+        if (state.service) {
+          state.step = "name";
+          botSay(nameAskHtml());
+        } else {
+          state.step = "service";
+          botSay(slotAvailableHtml(true));
+          replyButtons(SERVICES.map((s) => ({ label: s.name + " · " + euro(s.price), value: "svc:" + s.id })));
+        }
+      } else if (state.service && !state.branch) {
+        state.step = "branch";
+        const s = svcById(state.service);
+        botSay("A <b>" + escapeHtml(s.name) + "</b> is " + euro(s.price) + ". Which studio would you prefer?");
+        replyButtons(BRANCHES.map((b) => ({ label: b.name, value: "br:" + b.id })));
+      } else {
+        resetBooking(false);
+        state.step = "branch";
+        botSay(C.chat && C.chat.greeting ? C.chat.greeting : "Hello — I can help you book a visit. Which studio would you prefer?");
+        replyButtons(BRANCHES.map((b) => ({ label: b.name, value: "br:" + b.id })));
+      }
+      openChat();
+    }
+
+    function askDay() {
+      state.step = "day";
+      const now = maltaNow();
+      const options = [];
+      for (let i = 0; i <= 4; i++) {
+        const slots = slotsFor(brById(state.branch), now, i);
+        if (!slots.length) continue;
+        options.push({ label: dateLabel(now, i), value: "day:" + i });
+        if (options.length >= 3) break;
+      }
+      const b = brById(state.branch);
+      if (!options.length) {
+        botSay("I'm sorry, " + escapeHtml(b.name) + " doesn't have free times in the next few days. Would you like to try another branch?");
+        state.step = "branch";
+        replyButtons(BRANCHES.map((x) => ({ label: x.name, value: "br:" + x.id })));
+        return;
+      }
+      botSay("When would you like to come into <b>" + escapeHtml(b.name) + "</b>?");
+      replyButtons(options);
+    }
+
+    function askTime() {
+      state.step = "time";
+      const now = maltaNow();
+      const slots = slotsFor(brById(state.branch), now, state.dayOffset);
+      botSay("Here are the next free times at <b>" + escapeHtml(brById(state.branch).name) + "</b> (" + escapeHtml(longDate(now, state.dayOffset)) + "):");
+      replyButtons(slots.slice(0, 6).map((t) => ({ label: t, value: "time:" + t })));
+    }
+
+    function askName() {
+      state.step = "name";
+      setComposerMode("name");
+      botSay(nameAskHtml());
+      clearReplies();
+      $("chatInput").focus();
+    }
+    function phoneAskHtml() {
+      const who = state.name ? ", <b>" + escapeHtml(state.name) + "</b>" : "";
+      return "Thank you" + who + ". Could I please have a phone number so the salon can reach you if needed, and so you can easily change or cancel? It's only used for your booking. A Maltese number is fine — with +356 or just the eight digits.";
+    }
+    function emailAskHtml() {
+      return "And an email address, please, for the same reason — only used for your booking.";
+    }
+    function askPhone() {
+      state.step = "phone";
+      setComposerVisible(true);
+      setComposerMode("tel");
+      botSay(phoneAskHtml());
+      clearReplies();
+      $("chatInput").focus();
+    }
+    function askEmail() {
+      state.step = "email";
+      setComposerVisible(true);
+      setComposerMode("email");
+      botSay(emailAskHtml());
+      clearReplies();
+      $("chatInput").focus();
+    }
+    function tryCompleteBooking() {
+      if (!state.name || !state.branch || !state.service || state.time == null || state.dayOffset == null) return false;
+      if (!state.phone) { askPhone(); return true; }
+      if (!state.email) { askEmail(); return true; }
+      confirmBooking();
+      return true;
+    }
+
+    function makeRef() {
+      const parts = String(C.name || "BK").replace(/[^A-Za-z0-9 ]/g, " ").trim().split(/\s+/);
+      const prefix = parts.map(function (w) { return w.charAt(0); }).join("").toUpperCase().slice(0, 3) || "BK";
+      let n = hash(state.name + "|" + state.branch + "|" + state.time + "|" + Date.now()) >>> 0;
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let code = "";
+      for (let i = 0; i < 4; i++) {
+        code += chars[n % chars.length];
+        n = (Math.floor(n / chars.length) ^ (hash(String(n + i * 17)) >>> 0)) >>> 0;
+      }
+      return prefix + "-" + code;
+    }
+
+    function icsDate(stamp, time, addMins) {
+      const parts = stamp.split("-").map(Number);
+      const hm = time.split(":").map(Number);
+      const dt = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2], hm[0], hm[1]));
+      if (addMins) dt.setUTCMinutes(dt.getUTCMinutes() + addMins);
+      function p(n) { return String(n).padStart(2, "0"); }
+      return dt.getUTCFullYear() + p(dt.getUTCMonth() + 1) + p(dt.getUTCDate()) + "T" + p(dt.getUTCHours()) + p(dt.getUTCMinutes()) + "00";
+    }
+
+    function downloadIcs(booking) {
+      const tz = C.timeZone || "Europe/Malta";
+      const start = icsDate(booking.stamp, booking.time, 0);
+      const end = icsDate(booking.stamp, booking.time, booking.mins || 30);
+      const now = new Date();
+      function p(n) { return String(n).padStart(2, "0"); }
+      const stampUtc = now.getUTCFullYear() + p(now.getUTCMonth() + 1) + p(now.getUTCDate()) + "T" +
+        p(now.getUTCHours()) + p(now.getUTCMinutes()) + p(now.getUTCSeconds()) + "Z";
+      function fold(s) { return String(s).replace(/\\/g, "\\\\").replace(/,/g, "\\,").replace(/;/g, "\\;"); }
+      const ics = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//" + fold(C.name || "Barber") + "//Booking//EN",
+        "CALSCALE:GREGORIAN",
+        "BEGIN:VEVENT",
+        "UID:" + booking.ref + "@barber-demo",
+        "DTSTAMP:" + stampUtc,
+        "DTSTART;TZID=" + tz + ":" + start,
+        "DTEND;TZID=" + tz + ":" + end,
+        "SUMMARY:" + fold(booking.service + " at " + C.name + " (" + booking.branchName + ")"),
+        "DESCRIPTION:" + fold("Ref " + booking.ref + (booking.barber ? " with " + booking.barber : "") + ". Pay in shop, " + euro(booking.price) + "."),
+        "LOCATION:" + fold(booking.address || booking.branchName),
+        "END:VEVENT",
+        "END:VCALENDAR"
+      ].join("\r\n");
+      const blob = new Blob([ics], { type: "text/calendar" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = booking.ref + ".ics";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 500);
+    }
+
+    function confirmBooking() {
+      state.step = "done";
+      const s = svcById(state.service);
+      const b = brById(state.branch);
+      const now = maltaNow();
+      const when = longDate(now, state.dayOffset) + " at " + state.time;
+      const ref = makeRef();
+      const barber = assignedBarber();
+      const booking = {
+        ref: ref,
+        name: state.name,
+        branch: b.id,
+        branchName: b.name,
+        address: b.address,
+        service: s.name,
+        serviceId: s.id,
+        price: s.price,
+        mins: s.mins,
+        stamp: dateStamp(now, state.dayOffset),
+        time: state.time,
+        when: when,
+        barber: barber ? barber.name : "",
+        barberFirst: barberFirstName(barber),
+        phone: state.phone,
+        email: state.email
+      };
+      state.ref = ref;
+      state.booking = booking;
+      const list = loadBookings().filter(function (x) { return !(x.branch === booking.branch && x.stamp === booking.stamp && x.time === booking.time); });
+      list.push(booking);
+      saveBookings(list);
+      renderSlots();
+      updateSticky();
+      setComposerVisible(true);
+      setComposerMode("");
+      const first = booking.name ? escapeHtml(booking.name.split(/\s+/)[0]) : "";
+      const thanks = "Thank you" + (first ? ", " + first : "") + ". Your " + escapeHtml(String(booking.service || "appointment").toLowerCase()) + " is booked for " + escapeHtml(booking.when) + (booking.barberFirst ? " with " + escapeHtml(booking.barberFirst) : "") + " at " + escapeHtml(booking.branchName) + ".";
+      botSay(thanks);
+      const histText = "Booked " + booking.ref + " for " + booking.name + ", " + booking.service + " at " + booking.branchName + (booking.barber ? " with " + booking.barber : "") + ", " + booking.when + ". Pay in shop. The salon has been notified.";
+      showStatusCard("booked", booking, "The salon has been notified", histText);
+    }
+
+    function looksLikeName(raw) {
+      const s = String(raw || "").trim();
+      if (!s || /[?]/.test(s)) return false;
+      const words = s.split(/\s+/);
+      if (words.length < 1 || words.length > 3) return false;
+      if (s.length < 2 || s.length > 40) return false;
+      if (!/^[A-Za-zÀ-ÖØ-öø-ÿĀ-ž'’.\-]+(?:\s+[A-Za-zÀ-ÖØ-öø-ÿĀ-ž'’.\-]+){0,2}$/.test(s)) return false;
+      if (words.length > 1 && /\b(the|a|an|do|does|did|is|are|am|was|were|can|could|would|should|have|has|had|what|when|where|who|why|how|which|please|available|better|later|earlier|today|tomorrow|book|booking|appointment|haircut|fade|beard|shave|thanks|thank)\b/i.test(s)) return false;
+      if (words.length === 1 && /^(the|a|an|do|does|did|is|are|am|was|were|can|could|would|should|have|has|had|what|when|where|who|why|how|which|please|available|better|later|earlier|today|tomorrow|yes|no|ok|okay|thanks|thank)$/i.test(s)) return false;
+      return true;
+    }
+
+    function detectIntent(text) {
+      const t = text.toLowerCase().trim();
+      if (/\b(reschedule|re-schedule|change my (booking|appointment|time|reservation)|move my (booking|appointment|reservation)|change the (time|day|date)|pick a different time)\b/.test(t)) return "manage_reschedule";
+      if (/\b((i )?(need|want|have) to cancel|can i cancel|please cancel|cancel( my| the| this)? (booking|appointment|reservation)|cancel it|cancel that)\b/.test(t)) return "manage_cancel";
+      if (/^cancel\s*\/\s*change$/.test(t) || /^(cancel or change|change or cancel)$/.test(t)) return "manage_choose";
+      if (/^(start over|restart|reset|never mind|forget it)$/.test(t) || /\b(start over|start again|forget it)\b/.test(t)) return "abort";
+      if (/^cancel$/.test(t)) return (loadBookings().length || state.booking) ? "manage_cancel" : "abort";
+      if (/\b(earlier|sooner|before that)\b/.test(t)) return "earlier";
+      if (/\b(later|after that)\b/.test(t)) return "later";
+      if (/\b(better time|another time|different time|other time|other slot|another slot|more times|any other time|else available|different slot)\b/.test(t)) return "other_time";
+      if (/\b(another day|different day|other day|another date|different date|a different day)\b/.test(t)) return "other_day";
+      if (/\b(how much|price|prices|cost|costs|expensive|cheap|pay in shop|payment)\b/.test(t)) return "price";
+      if (/\b(where|address|location|located|directions|how do i get|on the map)\b/.test(t)) return "location";
+      if (/\b(hours|open|close|opening|closing|what time do you)\b/.test(t)) return "hours";
+      if (/\b((change|switch|different) (service|cut|style)|another service|change (the )?service)\b/.test(t)) return "change_service";
+      if (/\b((change|switch|different) (branch|shop)|another (branch|shop)|other (branch|shop)|change (the )?branch)\b/.test(t)) return "change_branch";
+      return null;
+    }
+
+    function branchReplies() { return BRANCHES.map(function (b) { return { label: b.name, value: "br:" + b.id }; }); }
+    function serviceReplies() { return SERVICES.map(function (s) { return { label: s.name + " · " + euro(s.price), value: "svc:" + s.id }; }); }
+    function dayReplies() {
+      const now = maltaNow();
+      const options = [];
+      if (!state.branch) return options;
+      for (let i = 0; i <= 4; i++) {
+        if (!slotsFor(brById(state.branch), now, i).length) continue;
+        options.push({ label: dateLabel(now, i), value: "day:" + i });
+      }
+      return options;
+    }
+    function timeReplies() {
+      if (!state.branch || state.dayOffset == null) return [];
+      return slotsFor(brById(state.branch), maltaNow(), state.dayOffset).slice(0, 8).map(function (tm) {
+        return { label: tm, value: "time:" + tm };
+      });
+    }
+
+    function promptForStep() {
+      const s = svcById(state.service);
+      const b = brById(state.branch);
+      if (state.step === "branch") return { html: "Which branch works for you?", replies: branchReplies() };
+      if (state.step === "service") return { html: "What can we do for you?", replies: serviceReplies() };
+      if (state.step === "day") return { html: b ? "When would you like to come into <b>" + escapeHtml(b.name) + "</b>?" : "Which day works?", replies: dayReplies() };
+      if (state.step === "time") return { html: "Which time works for you?", replies: timeReplies() };
+      if (state.step === "name") {
+        setComposerMode("name");
+        return { html: (s && b && state.time) ? nameAskHtml() : "Could you please give me your name so we can proceed with your reservation?", replies: [], focus: true };
+      }
+      if (state.step === "phone") {
+        setComposerMode("tel");
+        return { html: phoneAskHtml(), replies: [], focus: true };
+      }
+      if (state.step === "email") {
+        setComposerMode("email");
+        return { html: emailAskHtml(), replies: [], focus: true };
+      }
+      if (state.step === "done") return { html: "Your reservation is confirmed. You can add it to your calendar, or cancel or change it if you need to.", replies: [] };
+      return { html: "", replies: [] };
+    }
+
+    function withPrompt(html) {
+      const p = promptForStep();
+      return { html: html + " " + p.html, replies: p.replies, focus: p.focus, patch: p.patch };
+    }
+
+    function otherSlotReply(kind) {
+      if (!state.branch) {
+        state.step = "branch";
+        return { html: "Which branch should I check times for?", replies: branchReplies() };
+      }
+      const now = maltaNow();
+      if (state.dayOffset == null) {
+        state.step = "day";
+        return { html: "Sure — which day should I look at?", replies: dayReplies() };
+      }
+      let slots = slotsFor(brById(state.branch), now, state.dayOffset);
+      if (state.time && kind === "later") slots = slots.filter(function (tm) { return tm > state.time; });
+      else if (state.time && kind === "earlier") slots = slots.filter(function (tm) { return tm < state.time; });
+      else if (state.time) slots = slots.filter(function (tm) { return tm !== state.time; });
+      if (slots.length) {
+        state.step = "time";
+        const label = kind === "earlier" ? "earlier" : kind === "later" ? "later" : "other";
+        return { html: "Here are " + label + " free times at <b>" + escapeHtml(brById(state.branch).name) + "</b> (" + escapeHtml(longDate(now, state.dayOffset)) + "):", replies: slots.slice(0, 8).map(function (tm) { return { label: tm, value: "time:" + tm }; }) };
+      }
+      const days = [];
+      for (let i = 0; i <= 4; i++) {
+        if (i === state.dayOffset) continue;
+        if (slotsFor(brById(state.branch), now, i).length) days.push({ label: dateLabel(now, i), value: "day:" + i });
+      }
+      if (days.length) {
+        state.step = "day";
+        return { html: "I don't have other free times on that day. Would another day work for you?", replies: days };
+      }
+      state.step = "branch";
+      return { html: "I don't have other free times at that branch in the next few days. Would you like to try another branch?", replies: branchReplies() };
+    }
+
+    function intentReply(intent) {
+      const s = svcById(state.service);
+      const b = brById(state.branch);
+      if (intent === "manage_cancel") return startManage("cancel", "");
+      if (intent === "manage_reschedule") return startManage("reschedule", "");
+      if (intent === "manage_choose") {
+        const b = state.booking || (loadBookings()[0] || null);
+        if (!b) return startManage("cancel", "");
+        state.pendingAction = { type: "lookup", intent: "choose", ref: b.ref };
+        return {
+          html: "Would you like to cancel " + bookingWhenPhrase(b) + ", or change the time?",
+          replies: [
+            { label: "Cancel the booking", value: "cancel-pick:" + b.ref },
+            { label: "Change the time", value: "rsv-pick:" + b.ref }
+          ]
+        };
+      }
+      if (intent === "abort") return { action: "abort" };
+      if (intent === "price") {
+        const html = s
+          ? "A <b>" + escapeHtml(s.name) + "</b> is <b>" + euro(s.price) + "</b>, paid in the salon."
+          : "Here’s what we charge (example prices, paid in the salon): " + SERVICES.map(function (x) { return escapeHtml(x.name) + " " + euro(x.price); }).join(", ") + ".";
+        return withPrompt(html);
+      }
+      if (intent === "location") {
+        const html = b
+          ? "<b>" + escapeHtml(b.name) + "</b> is at " + escapeHtml(b.address) + "."
+          : "We have " + BRANCHES.map(function (x) { return "<b>" + escapeHtml(x.name) + "</b> — " + escapeHtml(x.address); }).join("; ") + ".";
+        return withPrompt(html);
+      }
+      if (intent === "hours") {
+        const html = b
+          ? "<b>" + escapeHtml(b.name) + "</b> is open " + escapeHtml(b.hours) + (b.closedLabel ? " (" + escapeHtml(b.closedLabel) + ")" : "") + "."
+          : BRANCHES.map(function (x) { return "<b>" + escapeHtml(x.name) + "</b>: " + escapeHtml(x.hours); }).join(". ") + ".";
+        return withPrompt(html);
+      }
+      if (intent === "earlier" || intent === "later" || intent === "other_time") return otherSlotReply(intent);
+      if (intent === "other_day") {
+        if (!state.branch) {
+          state.step = "branch";
+          return { html: "Which branch should I check a different day for?", replies: branchReplies() };
+        }
+        state.step = "day";
+        return { html: "No problem — which day works better?", replies: dayReplies() };
+      }
+      if (intent === "change_service") {
+        state.step = "service";
+        return { html: "Of course — what would you like instead?", replies: serviceReplies() };
+      }
+      if (intent === "change_branch") {
+        state.time = null;
+        state.dayOffset = null;
+        state.step = "branch";
+        return { html: "Sure — which branch would you like?", replies: branchReplies() };
+      }
+      return null;
+    }
+
+    function scriptedReply(hist) {
+      const last = hist && hist.length ? hist[hist.length - 1] : null;
+      const raw = last && last.role === "user" ? String(last.text || "").trim() : "";
+      if (!raw) return withPrompt("Sorry, I missed that.");
+      const t = raw.toLowerCase();
+      const intent = detectIntent(raw);
+
+      const local = pendingLocalReply(raw);
+      if (local) return local;
+
+      if (intent === "manage_cancel" || intent === "manage_reschedule" || intent === "manage_choose" || intent === "abort") {
+        return intentReply(intent);
+      }
+
+      if (state.step === "done") {
+        if (intent === "manage_cancel") return startManage("cancel", raw);
+        if (intent === "manage_reschedule" || intent === "manage_choose") return intentReply(intent || "manage_choose");
+        if (/\b(calendar|ics|download)\b/.test(t)) return { html: "Tap <b>Add to calendar</b> to download an .ics file.", replies: [] };
+        return { html: "Your reservation is confirmed. You can add it to your calendar, or cancel or change it if you need to.", replies: [] };
+      }
+
+      if (intent) return intentReply(intent);
+
+      if (state.step === "phone") {
+        const phone = normalizePhone(raw);
+        if (phone) {
+          state.phone = phone;
+          if (!state.email) return { html: emailAskHtml(), focus: true, patch: { step: "email" } };
+          return { action: "confirm" };
+        }
+        return { html: "I couldn't quite read that number. Please use +356 followed by 8 digits, or just the local 8 digits — for example +356 7900 0000. It's only used for your booking.", replies: [], focus: true };
+      }
+      if (state.step === "email") {
+        const email = normalizeEmail(raw);
+        if (email) {
+          state.email = email;
+          return { action: "confirm" };
+        }
+        return { html: "That email doesn't look quite right. Could you please check it and try again? It's only used for your booking.", replies: [], focus: true };
+      }
+
+      if (state.step === "name") {
+        if (looksLikeName(raw)) {
+          state.name = raw.replace(/\s+/g, " ");
+          return { html: phoneAskHtml(), focus: true, patch: { step: "phone", name: state.name } };
+        }
+        const svc = matchService(t);
+        if (svc) {
+          state.service = svc;
+          state.step = "name";
+          return withPrompt("Of course — I can change that to a <b>" + escapeHtml(svcById(svc).name) + "</b>.");
+        }
+        const br = matchBranch(t);
+        if (br) {
+          state.branch = br;
+          state.time = null;
+          state.step = "day";
+          return { html: "Okay, <b>" + escapeHtml(brById(br).name) + "</b>. Which day works?", replies: dayReplies() };
+        }
+        const tm = matchTime(t);
+        if (tm && state.branch && state.dayOffset != null) {
+          const slots = slotsFor(brById(state.branch), maltaNow(), state.dayOffset);
+          if (slots.indexOf(tm) !== -1) {
+            state.time = tm;
+            return withPrompt("Of course, I can move you to <b>" + escapeHtml(tm) + "</b>.");
+          }
+        }
+        return { html: "Could you please share your name? A first name is enough. You're also welcome to ask about times, prices or the salon.", replies: [], focus: true };
+      }
+
+      if (state.step === "branch") {
+        const id = matchBranch(t);
+        if (id) return { action: "step", value: "br:" + id, label: brById(id).name };
+        return { html: "I didn’t catch the branch — pick one of the buttons, or type " + BRANCHES.map(function (b) { return b.name; }).join(", ").replace(/, ([^,]*)$/, " or $1") + ".", replies: branchReplies() };
+      }
+      if (state.step === "service") {
+        const id = matchService(t);
+        if (id) {
+          const s = svcById(id);
+          return { action: "step", value: "svc:" + id, label: s.name + " · " + euro(s.price) };
+        }
+        return { html: "I didn’t catch the service — use a button, or type haircut, skin fade, beard, and so on.", replies: serviceReplies() };
+      }
+      if (state.step === "day") {
+        const off = matchDay(t);
+        if (off != null) {
+          const slots = slotsFor(brById(state.branch), maltaNow(), off);
+          if (!slots.length) return { html: "That day looks closed or full. Would another day work for you?", replies: dayReplies() };
+          return { action: "step", value: "day:" + off, label: dateLabel(maltaNow(), off) };
+        }
+        return { html: "Pick a day from the buttons, or type today or tomorrow.", replies: dayReplies() };
+      }
+      if (state.step === "time") {
+        const tm = matchTime(t);
+        const slots = slotsFor(brById(state.branch), maltaNow(), state.dayOffset);
+        if (tm && slots.indexOf(tm) !== -1) return { action: "step", value: "time:" + tm, label: tm };
+        if (tm) return { html: escapeHtml(tm) + " isn't free that day. You can pick one of the times below.", replies: slots.slice(0, 6).map(function (x) { return { label: x, value: "time:" + x }; }) };
+        return { html: "Pick a time from the buttons, or type one like 14:30.", replies: timeReplies() };
+      }
+      return withPrompt("Sorry, I didn’t catch that.");
+    }
+
+    function todayLabel() {
+      const n = maltaNow();
+      const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      return days[n.dow] + " " + dateStamp(n, 0) + ", " + String(n.hour).padStart(2, "0") + ":" + String(n.minute).padStart(2, "0") + " " + (C.timeZone || "Europe/Malta");
+    }
+    function slotsPayload() {
+      const now = maltaNow();
+      return BRANCHES.map(function (b) {
+        const days = [];
+        for (let i = 0; i <= 4; i++) {
+          const stamp = dateStamp(now, i);
+          const times = slotsFor(b, now, i).slice(0, 10).map(function (tm) {
+            const barber = barberForSlot(b.id, stamp, tm);
+            return { time: tm, staff: barberFirstName(barber) || undefined, barber: barberFirstName(barber) || undefined, mins: serviceDurationMins() };
+          });
+          if (times.length) days.push({ date: stamp, label: longDate(now, i), times: times });
+        }
+        return { id: b.id, name: b.name, days: days };
+      });
+    }
+    function findService(s) {
+      const q = String(s || "").toLowerCase().trim();
+      return SERVICES.find(function (x) {
+        return x.id === q || x.name.toLowerCase() === q || (x.aliases || []).some(function (a) { return String(a).toLowerCase() === q; });
+      });
+    }
+    function findBranch(s) {
+      const q = String(s || "").toLowerCase().trim();
+      return BRANCHES.find(function (x) {
+        return x.id === q || x.name.toLowerCase() === q || (x.aliases || []).some(function (a) { return q.indexOf(String(a).toLowerCase()) !== -1; });
+      });
+    }
+    function hydrateBooking(bk) {
+      if (!bk || typeof bk !== "object") return false;
+      const br = findBranch(bk.branch);
+      const sv = findService(bk.service);
+      const time = String(bk.time || "").trim();
+      const date = String(bk.date || "").trim();
+      const name = String(bk.name || "").trim();
+      if (!br || !sv || !name || !date || !/^\d{2}:\d{2}$/.test(time)) return false;
+      const now = maltaNow();
+      let offset = null;
+      for (let i = 0; i <= 14; i++) {
+        if (dateStamp(now, i) === date) { offset = i; break; }
+      }
+      if (offset == null) return false;
+      if (slotsFor(br, now, offset).indexOf(time) === -1) return false;
+      state.branch = br.id;
+      state.service = sv.id;
+      state.dayOffset = offset;
+      state.time = time;
+      state.name = name;
+      if (bk.phone && normalizePhone(bk.phone)) state.phone = normalizePhone(bk.phone);
+      if (bk.email && normalizeEmail(bk.email)) state.email = normalizeEmail(bk.email);
+      return true;
+    }
+
+    function selectedPayload() {
+      const b = brById(state.branch);
+      const s = svcById(state.service);
+      const barber = assignedBarber();
+      const out = { awaiting: state.step || null };
+      if (b) { out.branch = b.name; out.branchId = b.id; }
+      if (s) { out.service = s.name; out.serviceId = s.id; }
+      if (state.dayOffset != null) {
+        out.date = dateStamp(maltaNow(), state.dayOffset);
+        out.dayLabel = longDate(maltaNow(), state.dayOffset);
+      }
+      if (state.time) out.time = state.time;
+      if (barber) { out.barber = barberFirstName(barber); out.barberFull = barber.name; }
+      if (state.name) out.name = state.name;
+      if (state.phone) out.phone = state.phone;
+      if (state.email) out.email = state.email;
+      return out;
+    }
+
+    // When CONFIG.aiEndpoint is set, POST { messages, "config-subset", knowledge, slots, today, selected }
+    // and expect { reply, booking, quickReplies }. On error, use the scripted assistant.
+    async function getReply(hist) {
+      if (C.aiEndpoint) {
+        try {
+          const res = await fetch(C.aiEndpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              messages: hist,
+              "config-subset": {
+                name: C.name,
+                kind: C.kind || "salon",
+                staffWord: C.staffWord || "stylist",
+                placeWord: C.placeWord || "salon",
+                phone: C.phone,
+                currency: C.currency,
+                services: SERVICES.map(function (s) { return { id: s.id, name: s.name, price: s.price, mins: s.mins }; }),
+                branches: BRANCHES.map(function (b) { return { id: b.id, name: b.name, address: b.address, hours: b.hours, closedLabel: b.closedLabel }; })
+              },
+              knowledge: C.knowledge || {},
+              slots: slotsPayload(),
+              today: todayLabel(),
+              selected: selectedPayload(),
+              bookings: bookingsPayload()
+            })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data && (data.reply || data.text || data.html || data.replies || data.quickReplies || data.action || data.booking)) {
+              if (data.reply && !data.text && !data.html) data.text = data.reply;
+              if (data.quickReplies && !data.replies) {
+                data.replies = data.quickReplies.map(function (label) { return { label: label, value: "ai:" + label }; });
+              }
+              return data;
+            }
+          }
+        } catch (err) { /* fall back to scripted */ }
+      }
+      return scriptedReply(hist);
+    }
+
+    function isManageAction(reply) {
+      if (!reply) return false;
+      const a = reply.action;
+      return a === "cancel" || a === "reschedule" || a === "propose_cancel" || a === "propose_reschedule" || a === "abort";
+    }
+    function mapQuickReplies(reply) {
+      if (reply.replies && reply.replies.length) return reply.replies;
+      if (!reply.quickReplies || !reply.quickReplies.length) return [];
+      return reply.quickReplies.map(function (label) {
+        const v = String(label || "");
+        const low = v.toLowerCase();
+        if (reply.ref && /cancel/.test(low) && /yes|please/.test(low)) return { label: v, value: "cancel-yes:" + reply.ref };
+        if (/keep|don't cancel|do not cancel|no,/.test(low) && reply.action === "propose_cancel") return { label: v, value: "cancel-no" };
+        if (reply.reschedule && reply.reschedule.ref && /yes|move|please/.test(low)) {
+          return { label: v, value: "move-yes|" + reply.reschedule.ref + "|" + reply.reschedule.date + "|" + reply.reschedule.time };
+        }
+        return { label: v, value: "ai:" + v };
+      });
+    }
+    function applyReply(reply) {
+      if (!reply) return;
+      if (reply.patch) Object.assign(state, reply.patch);
+      if (reply.action === "abort") {
+        abortDraft(reply.html || reply.text || "");
+        updateSticky();
+        return;
+      }
+      if (reply.action === "propose_cancel" && (reply.ref || (reply.booking && reply.booking.ref))) {
+        const ref = reply.ref || reply.booking.ref;
+        const b = findBookingByRef(ref);
+        if (b) {
+          const proposed = proposeCancel(b);
+          if (reply.text || reply.html) proposed.html = reply.html || escapeHtml(reply.text);
+          botSay(proposed.html);
+          replyButtons(mapQuickReplies(reply).length ? mapQuickReplies(reply) : proposed.replies);
+          updateSticky();
+          return;
+        }
+      }
+      if (reply.action === "cancel" && reply.ref) {
+        executeCancel(reply.ref, reply.html || reply.text || "");
+        updateSticky();
+        return;
+      }
+      if (reply.action === "propose_reschedule" && reply.ref) {
+        const b = findBookingByRef(reply.ref);
+        if (b) {
+          const proposed = proposeReschedule(b);
+          if (reply.text || reply.html) proposed.html = reply.html || escapeHtml(reply.text);
+          botSay(proposed.html);
+          replyButtons((mapQuickReplies(reply).length && !/cancel/i.test((reply.quickReplies || []).join(" "))) ? mapQuickReplies(reply) : proposed.replies);
+          updateSticky();
+          return;
+        }
+      }
+      if (reply.action === "reschedule" && reply.reschedule && reply.reschedule.ref && reply.reschedule.date && reply.reschedule.time) {
+        executeReschedule(reply.reschedule.ref, reply.reschedule.date, reply.reschedule.time, reply.html || reply.text || "");
+        updateSticky();
+        return;
+      }
+      if (reply.action === "confirm" || reply.action === "book" || (reply.booking && hydrateBooking(reply.booking))) {
+        if (reply.name) state.name = reply.name;
+        if (reply.booking) {
+          if (reply.booking.name) state.name = reply.booking.name;
+          if (reply.booking.phone && normalizePhone(reply.booking.phone)) state.phone = normalizePhone(reply.booking.phone);
+          if (reply.booking.email && normalizeEmail(reply.booking.email)) state.email = normalizeEmail(reply.booking.email);
+        }
+        const askedPhone = /phone|mobile|number/i.test(reply.text || reply.html || "");
+        const askedEmail = /e-?mail/i.test(reply.text || reply.html || "");
+        if (state.name && state.branch && state.service && state.time != null && state.dayOffset != null) {
+          if (!state.phone) {
+            if (askedPhone && (reply.text || reply.html)) {
+              state.step = "phone";
+              setComposerMode("tel");
+              botSay(reply.html || escapeHtml(reply.text));
+              clearReplies();
+              $("chatInput").focus();
+            } else {
+              if (reply.text || reply.html) botSay(reply.html || escapeHtml(reply.text));
+              askPhone();
+            }
+            updateSticky();
+            return;
+          }
+          if (!state.email) {
+            if (askedEmail && (reply.text || reply.html)) {
+              state.step = "email";
+              setComposerMode("email");
+              botSay(reply.html || escapeHtml(reply.text));
+              clearReplies();
+              $("chatInput").focus();
+            } else {
+              if (reply.text || reply.html) botSay(reply.html || escapeHtml(reply.text));
+              askEmail();
+            }
+            updateSticky();
+            return;
+          }
+          if (reply.text || reply.html) botSay(reply.html || escapeHtml(reply.text));
+          confirmBooking();
+          updateSticky();
+          return;
+        }
+      }
+      if (reply.action === "step" && reply.value) {
+        handleReply(reply.value, reply.label || reply.value);
+        return;
+      }
+      if (reply.html || reply.text) botSay(reply.html || escapeHtml(reply.text));
+      const repliesList = mapQuickReplies(reply);
+      if (repliesList.length) replyButtons(repliesList);
+      else clearReplies();
+      if (reply.focus) $("chatInput").focus();
+      updateSticky();
+    }
+
+    function manageSafetyNet(raw, reply) {
+      const intent = detectIntent(raw);
+      if (intent !== "manage_cancel" && intent !== "manage_reschedule" && intent !== "manage_choose") return reply;
+      if (isManageAction(reply)) return reply;
+      const text = String(reply && (reply.text || reply.html) || "");
+      if (/proceed with booking|which branch would you|book a visit/i.test(text) && !/cancel your/i.test(text)) {
+        return intentReply(intent);
+      }
+      if (!reply || !(reply.text || reply.html)) return intentReply(intent);
+      return reply;
+    }
+
+    async function handleTyped(text) {
+      const raw = String(text || "").trim();
+      if (!raw) return;
+      userSay(raw);
+      showTyping();
+      const local = pendingLocalReply(raw);
+      if (local) {
+        applyReply(local);
+        return;
+      }
+      const intent = detectIntent(raw);
+      if (intent === "abort") {
+        applyReply({ action: "abort" });
+        return;
+      }
+      if (intent === "manage_cancel" || intent === "manage_reschedule" || intent === "manage_choose") {
+        if (!loadBookings().length && !state.booking) {
+          applyReply(startManage(intent === "manage_reschedule" ? "reschedule" : "cancel", raw));
+          return;
+        }
+        const reply = manageSafetyNet(raw, await getReply(history));
+        applyReply(reply);
+        return;
+      }
+      if (state.step === "name" && looksLikeName(raw) && state.branch && state.service && state.time != null) {
+        state.name = raw.replace(/\s+/g, " ");
+        askPhone();
+        return;
+      }
+      if (state.step === "phone") {
+        const phone = normalizePhone(raw);
+        if (phone) { state.phone = phone; askEmail(); return; }
+        applyReply({ html: "I couldn't quite read that number. Please use +356 followed by 8 digits, or just the local 8 digits — for example +356 7900 0000. It's only used for your booking.", replies: [], focus: true });
+        return;
+      }
+      if (state.step === "email") {
+        const email = normalizeEmail(raw);
+        if (email) { state.email = email; tryCompleteBooking(); return; }
+        applyReply({ html: "That email doesn't look quite right. Could you please check it and try again? It's only used for your booking.", replies: [], focus: true });
+        return;
+      }
+      const reply = manageSafetyNet(raw, await getReply(history));
+      applyReply(reply);
+    }
+
+    function handleReply(value, label) {
+      if (value === "reset") {
+        userSay(label);
+        abortDraft();
+        return;
+      }
+      if (value.indexOf("cancel-yes:") === 0) {
+        userSay(label);
+        showTyping();
+        executeCancel(value.slice("cancel-yes:".length));
+        return;
+      }
+      if (value === "cancel-no") {
+        userSay(label);
+        showTyping();
+        applyReply(pendingLocalReply("no") || { html: "Of course — I'll leave your booking as it is.", replies: [] });
+        return;
+      }
+      if (value.indexOf("cancel-pick:") === 0) {
+        userSay(label);
+        showTyping();
+        applyReply(proposeCancel(findBookingByRef(value.slice("cancel-pick:".length))));
+        return;
+      }
+      if (value.indexOf("rsv-pick:") === 0) {
+        userSay(label);
+        showTyping();
+        applyReply(proposeReschedule(findBookingByRef(value.slice("rsv-pick:".length))));
+        return;
+      }
+      if (value.indexOf("move-yes|") === 0 || value.indexOf("move-yes:") === 0) {
+        userSay(label);
+        showTyping();
+        const parts = value.replace(/^move-yes[|:]/, "").split("|");
+        const stampTime = parts.length >= 3 ? parts : value.replace(/^move-yes:/, "").split(":");
+        const ref = stampTime[0];
+        const stamp = stampTime[1];
+        const time = stampTime.length > 3 ? stampTime[2] + ":" + stampTime[3] : stampTime[2];
+        executeReschedule(ref, stamp, time);
+        return;
+      }
+      if (value === "move-no") {
+        userSay(label);
+        showTyping();
+        applyReply(pendingLocalReply("no") || { html: "No problem — I'll keep the original time.", replies: [] });
+        return;
+      }
+      if (value.indexOf("move|") === 0 || (value.indexOf("move:") === 0 && value.indexOf("move-yes") !== 0)) {
+        userSay(label);
+        showTyping();
+        const body = value.replace(/^move[|:]/, "");
+        const parts = value.indexOf("move|") === 0 ? body.split("|") : body.split(":");
+        const ref = parts[0];
+        const stamp = parts[1];
+        const time = parts.length > 3 ? parts[2] + ":" + parts[3] : parts[2];
+        const b = findBookingByRef(ref);
+        applyReply(proposeMoveTo(b, stamp, time));
+        return;
+      }
+      if (value.indexOf("ai:") === 0 || C.aiEndpoint) {
+        handleTyped(label);
+        return;
+      }
+      userSay(label);
+      showTyping();
+      if (value.startsWith("br:")) {
+        state.branch = value.slice(3);
+        if (!state.service) {
+          state.step = "service";
+          botSay("<b>" + escapeHtml(brById(state.branch).name) + "</b>, of course. What would you like done?");
+          replyButtons(SERVICES.map((s) => ({ label: s.name + " · " + euro(s.price), value: "svc:" + s.id })));
+        } else {
+          askDay();
+        }
+      } else if (value.startsWith("svc:")) {
+        state.service = value.slice(4);
+        renderServices();
+        updateSticky();
+        if (state.branch && state.time != null && state.dayOffset != null) askName();
+        else if (state.branch) askDay();
+        else {
+          state.step = "branch";
+          botSay("A <b>" + escapeHtml(svcById(state.service).name) + "</b>, certainly. Which studio would you prefer?");
+          replyButtons(BRANCHES.map((b) => ({ label: b.name, value: "br:" + b.id })));
+        }
+      } else if (value.startsWith("day:")) {
+        state.dayOffset = +value.slice(4);
+        askTime();
+      } else if (value.startsWith("time:")) {
+        state.time = value.slice(5);
+        updateSticky();
+        if (state.service) askName();
+        else {
+          state.step = "service";
+          botSay(slotAvailableHtml(true));
+          replyButtons(SERVICES.map((s) => ({ label: s.name + " · " + euro(s.price), value: "svc:" + s.id })));
+        }
+      }
+    }
+
+    function matchFromAliases(t, items) {
+      let best = null, bestLen = 0;
+      items.forEach(function (item) {
+        const names = [item.name].concat(item.aliases || []);
+        names.forEach(function (a) {
+          const s = String(a || "").toLowerCase();
+          if (s && t.indexOf(s) !== -1 && s.length > bestLen) {
+            best = item.id;
+            bestLen = s.length;
+          }
+        });
+      });
+      return best;
+    }
+    function matchBranch(t) { return matchFromAliases(t, BRANCHES); }
+    function matchService(t) { return matchFromAliases(t, SERVICES); }
+    function matchDay(t) {
+      const now = maltaNow();
+      if (/today/.test(t)) return 0;
+      if (/tomorrow|tmr|tmrw/.test(t)) return 1;
+      const names = ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"];
+      for (let i = 0; i < 7; i++) {
+        if (t.includes(names[i]) || t.includes(names[i].slice(0, 3))) {
+          let off = (i - now.dow + 7) % 7;
+          return off;
+        }
+      }
+      return null;
+    }
+    function matchTime(t) {
+      const m = t.match(/\b(\d{1,2})(?::|\.)?(\d{2})?\s*(am|pm)?\b/i);
+      if (!m) return null;
+      let h = +m[1], min = m[2] ? +m[2] : 0;
+      const ap = (m[3] || "").toLowerCase();
+      if (ap === "pm" && h < 12) h += 12;
+      if (ap === "am" && h === 12) h = 0;
+      if (h > 23 || min > 59) return null;
+      return String(h).padStart(2, "0") + ":" + String(min).padStart(2, "0");
+    }
+
+    /* Events */
+    $("dismissBanner").addEventListener("click", () => {
+      $("demoBanner").hidden = true;
+    });
+
+    serviceList.addEventListener("click", (e) => {
+      const li = e.target.closest("li[data-id]");
+      if (!li || li.classList.contains("cat")) return;
+      state.service = li.dataset.id;
+      renderServices();
+      renderSlots();
+      updateSticky();
+    });
+    serviceList.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      const li = e.target.closest("li[data-id]");
+      if (!li || li.classList.contains("cat")) return;
+      e.preventDefault();
+      state.service = li.dataset.id;
+      renderServices();
+      renderSlots();
+      updateSticky();
+    });
+
+    slotRows.addEventListener("click", (e) => {
+      const btn = e.target.closest(".chip[data-branch]");
+      if (!btn) return;
+      state.branch = btn.dataset.branch;
+      state.dayOffset = +btn.dataset.day;
+      state.time = btn.dataset.time;
+      updateSticky();
+      startConversation({ fromSlot: true });
+    });
+
+    function openBook() {
+      if (state.booking) { openChat(); return; }
+      if (state.service && state.branch && state.time != null) startConversation({ fromSlot: true });
+      else startConversation();
+    }
+    $("bookNow").addEventListener("click", openBook);
+    const heroChat = $("heroChat");
+    if (heroChat) {
+      heroChat.addEventListener("click", function () {
+        if (msgs && msgs.children.length) openChat();
+        else openBook();
+      });
+    }
+    $("stickyBook").addEventListener("click", openBook);
+    chatFab.addEventListener("click", openBook);
+    $("chatClose").addEventListener("click", closeChat);
+
+    $("composer").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const input = $("chatInput");
+      const v = input.value;
+      input.value = "";
+      handleTyped(v);
+    });
+
+    chat.addEventListener("click", function (e) {
+      if (e.target.closest("#addCal")) {
+        e.preventDefault();
+        if (state.booking) downloadIcs(state.booking);
+        return;
+      }
+      if (e.target.closest("#cancelChange")) {
+        e.preventDefault();
+        const b = state.booking || loadBookings()[loadBookings().length - 1];
+        if (!b) return;
+        openChat();
+        showTyping();
+        applyReply({
+          html: "Would you like to cancel " + bookingWhenPhrase(b) + ", or change the time?",
+          replies: [
+            { label: "Cancel the booking", value: "cancel-pick:" + b.ref },
+            { label: "Change the time", value: "rsv-pick:" + b.ref }
+          ]
+        });
+      }
+    });
+
+    applyConfig();
+    renderServices();
+    renderSlots();
+    renderBranches();
+    updateSticky();
+  })();
+  </script>
+</body>
+</html>
