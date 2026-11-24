@@ -2765,7 +2765,8 @@ const CONFIG = {
         updateSticky();
         return;
       }
-      if (reply.action === "confirm" || reply.action === "book" || (reply.booking && hydrateBooking(reply.booking))) {
+      if (reply.booking) hydrateBooking(reply.booking);
+      if (reply.action === "confirm" || reply.action === "book" || (reply.booking && hasServices() && state.time != null && state.dayOffset != null)) {
         if (reply.name) state.name = reply.name;
         if (reply.booking) {
           if (reply.booking.name) state.name = reply.booking.name;
