@@ -335,6 +335,21 @@
     }
     .toast.on { opacity: 1; }
 
+    .day-nav { display: flex; align-items: center; gap: 8px; }
+
+    @media (min-width: 801px) {
+      body.panel-open header .top-inner,
+      body.panel-open .stats,
+      body.panel-open .wrap {
+        max-width: none;
+        margin-right: min(400px, 36vw);
+      }
+      body.panel-open .panel-back {
+        background: transparent;
+        pointer-events: none;
+      }
+    }
+
     @media (max-width: 800px) {
       .stats { grid-template-columns: 1fr; }
       .staff-tabs { display: flex; }
@@ -342,6 +357,8 @@
       .wrap { padding: 10px 12px 32px; }
       .day-label { min-width: 0; }
       .cal { min-width: 0; }
+      .controls { width: 100%; }
+      .day-nav { width: 100%; justify-content: space-between; margin-top: 2px; }
     }
   </style>
 </head>
@@ -364,9 +381,11 @@
         <select id="branchSel" aria-label="Branch"></select>
         <button type="button" class="btn" id="btnToday">Today</button>
         <button type="button" class="btn" id="btnTomorrow">Tomorrow</button>
-        <button type="button" class="icon-btn" id="btnPrev" aria-label="Previous day">‹</button>
-        <div class="day-label" id="dayLabel"></div>
-        <button type="button" class="icon-btn" id="btnNext" aria-label="Next day">›</button>
+        <div class="day-nav">
+          <button type="button" class="icon-btn" id="btnPrev" aria-label="Previous day">‹</button>
+          <div class="day-label" id="dayLabel"></div>
+          <button type="button" class="icon-btn" id="btnNext" aria-label="Next day">›</button>
+        </div>
         <span class="closed-note" id="closedNote" hidden>Closed</span>
       </div>
     </div>
@@ -725,6 +744,7 @@
       requestAnimationFrame(function () {
         $("panel").classList.add("on");
         $("panelBack").classList.add("on");
+        document.body.classList.add("panel-open");
       });
       $("panelBody").onclick = function (e) {
         const btn = e.target.closest("[data-act]");
@@ -759,6 +779,7 @@
       writeUrl();
       $("panel").classList.remove("on");
       $("panelBack").classList.remove("on");
+      document.body.classList.remove("panel-open");
       setTimeout(function () {
         $("panel").hidden = true;
         $("panelBack").hidden = true;
