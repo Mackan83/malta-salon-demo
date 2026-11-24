@@ -22,3 +22,5 @@ Edit the commented `CONFIG` block at the top of `index.html`. Everything on the 
 Reload the page to see the changes. You do not need to edit the CSS or the rest of the JavaScript unless you want to change the layout.
 
 Booked times are stored in the browser (`localStorage`) and show as taken, including the full duration of the service. Prices and availability in the default config are examples.
+
+A matching back-office calendar lives at `shop.html` (also linked from the footer and the booked card). It uses the same `CONFIG` and availability generator, and shows bookings made in the chat.
