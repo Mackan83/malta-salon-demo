@@ -61,9 +61,13 @@ const CONFIG = {
       slotsTitleToday: "Next free slots today",
       slotsTitleTomorrow: "Next free slots tomorrow",
       slotsTitleOther: "Next free slots {day}",
+      serviceExamples: "gel manicure, balayage, lash lift",
+      catchService: "I didn't quite catch which service you meant — you can use a button, or type {examples}.",
+      catchGeneric: "Sorry, I didn't quite catch that. You're welcome to ask about times, prices or services, or pick a button below.",
+      payInPlace: "pay in salon",
       slotsNote: "Demo availability — not a live calendar. Times respect each service’s duration.",
       branchesTitle: "Three studios, one number",
-      branchesLede: "Pick the closest chair. Call or open maps.",
+      branchesLede: "Pick the closest studio. Call or open maps.",
       reviewsTitle: "What clients say",
       reviewsLede: "Short and useful — the kind of reviews people actually read.",
       footerBlurb: "A demo website for Malta beauty salons, nail studios and lash bars.",
@@ -162,8 +166,8 @@ const CONFIG = {
         note: "Pay in the salon after your appointment. No online payment, no deposits on the website."
       },
       contactPrivacy: "Phone and email are only used for your booking, so the salon can reach you and you can easily change or cancel.",
-      walkIns: "Walk-ins are welcome if a chair is free. Bookings take priority, especially on Saturdays and for colour, balayage and acrylics.",
-      cancellation: "Cancel free of charge up to 2 hours before your time. If it is later than that, please call the salon so we can try to fill the chair.",
+      walkIns: "Walk-ins are welcome if a stylist is free. Bookings take priority, especially on Saturdays and for colour, balayage and acrylics.",
+      cancellation: "Cancel free of charge up to 2 hours before your time. If it is later than that, please call the salon so we can try to fill the time.",
       late: "We hold a booking for 10 minutes. After that the slot may go to a walk-in, and we will offer you the next free time.",
       noShow: "Please cancel if you cannot come. After two no-shows we may ask you to book by phone only.",
       kids: "We welcome children for a simple trim or a kids’ nail polish with an adult present. Under 12s are best earlier in the day. We do not offer chemical colour or acrylics for young children — please call if you are unsure.",
@@ -242,7 +246,7 @@ const CONFIG = {
         }
       ],
       faqs: [
-        { q: "Do I need an appointment?", a: "Booking is recommended, especially for colour, balayage and acrylics. Walk-ins are welcome if a chair is free; bookings go first." },
+        { q: "Do I need an appointment?", a: "Booking is recommended, especially for colour, balayage and acrylics. Walk-ins are welcome if a stylist is free; bookings go first." },
         { q: "Do you do gel nails?", a: "Yes. A gel manicure is €30 and takes about 60 minutes. We also offer BIAB and acrylic full sets." },
         { q: "Are you open on Sunday?", a: "No. All three studios are closed on Sundays and public holidays." },
         { q: "What languages do you speak?", a: "English and Maltese in every studio, and Italian at the Sliema branch." }
@@ -252,7 +256,7 @@ const CONFIG = {
     reviews: [
       { stars: 5, text: "Booked a gel manicure in two taps and the price was right there. No hunting through menus.", who: "Maya · Sliema" },
       { stars: 5, text: "Lovely lash lift, on time, and they told me the aftercare without rushing. I’ll be back.", who: "Sara · Birkirkara" },
-      { stars: 5, text: "Had a cut and blow-dry in Gżira. Honest price on the first screen and the chair was ready.", who: "Lea · Gżira" }
+      { stars: 5, text: "Had a cut and blow-dry in Gżira. Honest price on the first screen and I was seen on time.", who: "Lea · Gżira" }
     ]
   };
   </script>
@@ -871,7 +875,7 @@ const CONFIG = {
     <section id="branches">
       <div class="wrap">
         <h2 class="sec" id="branchesTitle">Three studios, one number</h2>
-        <p class="lede" id="branchesLede">Pick the closest chair. Call or open maps.</p>
+        <p class="lede" id="branchesLede">Pick the closest studio. Call or open maps.</p>
         <div class="branch-grid" id="branchCards"></div>
       </div>
     </section>
@@ -1161,8 +1165,8 @@ const CONFIG = {
     function staffPoolForService(branchId, serviceId) {
       const list = barbersForBranch(branchId);
       if (!list.length) return list;
-      const s = svcById(serviceId || state.service);
-      const hay = ((s && (s.category || s.name)) || "").toLowerCase();
+      const focus = svcById(serviceId) || selectedServices()[0];
+      const hay = (selectedServices().map(function (x) { return (x.category || "") + " " + x.name; }).join(" ") || ((focus && (focus.category || focus.name)) || "")).toLowerCase();
       let key = "";
       if (/nail|manicure|biab|acrylic|pedicure/.test(hay)) key = "nail";
       else if (/lash|brow|tint|lamination/.test(hay)) key = "lash|brow";
@@ -1212,8 +1216,12 @@ const CONFIG = {
       return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
     }
     function serviceDurationMins(serviceId, fallback) {
-      const s = svcById(serviceId || state.service);
-      if (s && s.mins) return s.mins;
+      if (serviceId) {
+        const one = svcById(serviceId);
+        if (one && one.mins) return one.mins;
+      }
+      const list = selectedServices();
+      if (list.length) return list.reduce(function (n, s) { return n + (s.mins || 30); }, 0);
       return fallback != null ? fallback : 30;
     }
     function closeMinsFor(branch, dateObj) {
@@ -1249,7 +1257,7 @@ const CONFIG = {
       return times;
     }
 
-    const STORE_KEY = "barberDemo.bookings." + String(C.name || "demo").toLowerCase().replace(/\s+/g, "-");
+    const STORE_KEY = "salonDemo.bookings." + String(C.name || "demo").toLowerCase().replace(/\s+/g, "-");
 
     function loadBookings() {
       try {
@@ -1392,7 +1400,7 @@ const CONFIG = {
         "<dt>Branch</dt><dd>" + escapeHtml(booking.branchName || booking.branch) + "</dd>" +
         (booking.barber ? "<dt>" + escapeHtml(staffLbl()) + "</dt><dd>" + escapeHtml(booking.barber) + "</dd>" : "") +
         "<dt>Service</dt><dd>" + escapeHtml(booking.service) + "</dd>" +
-        "<dt>Price</dt><dd>" + euro(booking.price) + " <span class='pay'>pay in shop</span></dd>" +
+        "<dt>Price</dt><dd>" + euro(booking.price) + " <span class='pay'>" + payInLabel() + "</span></dd>" +
         "<dt>When</dt><dd>" + escapeHtml(booking.when) + "</dd>" +
         (booking.phone ? "<dt>Phone</dt><dd>" + escapeHtml(booking.phone) + "</dd>" : "") +
         (booking.email ? "<dt>Email</dt><dd>" + escapeHtml(booking.email) + "</dd>" : "") +
@@ -1461,6 +1469,7 @@ const CONFIG = {
 
     const state = {
       service: null,
+      services: [],
       branch: null,
       dayOffset: null,
       time: null,
@@ -1484,6 +1493,109 @@ const CONFIG = {
     const chatFab = $("chatFab");
 
     function euro(n) { return (C.currency || "€") + n; }
+
+    function placeWord() { return C.placeWord || (C.kind === "salon" ? "salon" : "shop"); }
+    function payInLabel() { return (C.copy && C.copy.payInPlace) || ("pay in " + placeWord()); }
+    function serviceExamples() {
+      if (C.copy && C.copy.serviceExamples) return C.copy.serviceExamples;
+      return SERVICES.slice(0, 3).map(function (s) { return s.name.toLowerCase(); }).join(", ");
+    }
+    function catchServiceHtml() {
+      const tmpl = (C.copy && C.copy.catchService) || "I didn't quite catch which service you meant — you can use a button, or type {examples}.";
+      return tmpl.replace("{examples}", serviceExamples());
+    }
+    function catchGenericHtml() {
+      return (C.copy && C.copy.catchGeneric) || ("Sorry, I didn't quite catch that. You're welcome to ask about times, prices or services, or pick a button below.");
+    }
+    function selectedServiceIds() {
+      if (Array.isArray(state.services) && state.services.length) {
+        return state.services.filter(function (id) { return !!svcById(id); });
+      }
+      return state.service && svcById(state.service) ? [state.service] : [];
+    }
+    function selectedServices() {
+      return selectedServiceIds().map(svcById).filter(Boolean);
+    }
+    function setServices(ids) {
+      const uniq = [];
+      (ids || []).forEach(function (id) {
+        if (id && svcById(id) && uniq.indexOf(id) === -1) uniq.push(id);
+      });
+      state.services = uniq;
+      state.service = uniq[0] || null;
+    }
+    function hasServices() { return selectedServices().length > 0; }
+    function servicePriceTotal() {
+      return selectedServices().reduce(function (n, s) { return n + (Number(s.price) || 0); }, 0);
+    }
+    function serviceLabel(list) {
+      const names = (list || selectedServices()).map(function (s) { return s.name; });
+      if (!names.length) return "";
+      if (names.length === 1) return names[0];
+      if (names.length === 2) return names[0] + " and " + names[1];
+      return names.slice(0, -1).join(", ") + " and " + names[names.length - 1];
+    }
+    function formatDuration(mins) {
+      mins = Number(mins) || 0;
+      if (mins < 60) return mins + " minutes";
+      const h = Math.floor(mins / 60), m = mins % 60;
+      if (!m) return h === 1 ? "1 hour" : h + " hours";
+      if (h === 1) return "1 hour " + m + " minutes";
+      return h + " hours " + m + " minutes";
+    }
+    function comboAnswer(ids) {
+      const list = (ids || []).map(svcById).filter(Boolean);
+      if (list.length < 2) return null;
+      const mins = list.reduce(function (n, s) { return n + (s.mins || 30); }, 0);
+      const price = list.reduce(function (n, s) { return n + (Number(s.price) || 0); }, 0);
+      return {
+        html: "Together, <b>" + escapeHtml(serviceLabel(list)) + "</b> would take about <b>" + formatDuration(mins) + "</b> and cost <b>" + euro(price) + "</b> in total. There isn't a combination discount, but you're welcome to have them in one visit and pay at the " + escapeHtml(placeWord()) + "."
+      };
+    }
+    function looksLikeQuestion(raw) {
+      const s = String(raw || "").trim();
+      if (!s) return false;
+      if (/[?]/.test(s)) return true;
+      return /^(how|what|when|where|who|why|which|can|could|would|will|do|does|did|is|are|am|have|has|was|were|may|might|please tell|i was wondering|i'd like to (know|ask)|tell me)\b/i.test(s);
+    }
+    function escapeRe(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); }
+    function matchAllServices(t) {
+      const raw = String(t || "").toLowerCase();
+      const found = [];
+      const scored = [];
+      SERVICES.forEach(function (item) {
+        const names = [item.name].concat(item.aliases || []);
+        names.forEach(function (a) {
+          const s = String(a || "").toLowerCase().trim();
+          if (!s) return;
+          const re = new RegExp("(^|[^a-z0-9])" + escapeRe(s) + "([^a-z0-9]|$)", "i");
+          if (re.test(raw)) scored.push({ id: item.id, len: s.length });
+        });
+      });
+      scored.sort(function (a, b) { return b.len - a.len; });
+      scored.forEach(function (row) {
+        if (found.indexOf(row.id) === -1) found.push(row.id);
+      });
+      return found;
+    }
+    function servicesFromHistory(hist, raw) {
+      const direct = matchAllServices(raw || "");
+      if (direct.length > 1) return direct;
+      if (state.services && state.services.length > 1) return state.services.slice();
+      if (hist && hist.length) {
+        for (let i = hist.length - 1; i >= 0; i--) {
+          const ids = matchAllServices(hist[i].text || hist[i].content || "");
+          if (ids.length > 1) return ids;
+        }
+      }
+      if (direct.length) return direct;
+      return selectedServiceIds();
+    }
+    function rememberServicesFromText(hist, raw) {
+      const ids = servicesFromHistory(hist, raw);
+      if (ids.length > 1) setServices(ids);
+      return ids;
+    }
 
     function renderServices() {
       const groups = [];
@@ -1683,8 +1795,8 @@ const CONFIG = {
     }
 
     function resetBooking(keepService) {
-      const svc = keepService ? state.service : null;
-      state.service = svc;
+      const kept = keepService ? selectedServiceIds() : [];
+      setServices(kept);
       state.branch = null;
       state.dayOffset = null;
       state.time = null;
@@ -1763,7 +1875,7 @@ const CONFIG = {
       if (spoken) {
         msg = spoken;
       } else if (late) {
-        msg = "I've noted the cancellation of " + bookingWhenPhrase(b) + ". Because it's within two hours of the appointment, it would help if you could also call the salon on " + shopPhoneHtml() + ", so they can try to fill the chair." + soft;
+        msg = "I've noted the cancellation of " + bookingWhenPhrase(b) + ". Because it's within two hours of the appointment, it would help if you could also call the salon on " + shopPhoneHtml() + ", so they can try to fill the time." + soft;
       } else {
         msg = "I've cancelled " + bookingWhenPhrase(b) + ". The slot is free again." + soft;
       }
@@ -2050,7 +2162,7 @@ const CONFIG = {
       $("chatInput").focus();
     }
     function tryCompleteBooking() {
-      if (!state.name || !state.branch || !state.service || state.time == null || state.dayOffset == null) return false;
+      if (!state.name || !state.branch || !hasServices() || state.time == null || state.dayOffset == null) return false;
       if (!state.phone) { askPhone(); return true; }
       if (!state.email) { askEmail(); return true; }
       confirmBooking();
@@ -2091,15 +2203,15 @@ const CONFIG = {
       const ics = [
         "BEGIN:VCALENDAR",
         "VERSION:2.0",
-        "PRODID:-//" + fold(C.name || "Barber") + "//Booking//EN",
+        "PRODID:-//" + fold(C.name || "Booking") + "//Booking//EN",
         "CALSCALE:GREGORIAN",
         "BEGIN:VEVENT",
-        "UID:" + booking.ref + "@barber-demo",
+        "UID:" + booking.ref + "@" + String(C.name || "booking").toLowerCase().replace(/\s+/g, "-"),
         "DTSTAMP:" + stampUtc,
         "DTSTART;TZID=" + tz + ":" + start,
         "DTEND;TZID=" + tz + ":" + end,
         "SUMMARY:" + fold(booking.service + " at " + C.name + " (" + booking.branchName + ")"),
-        "DESCRIPTION:" + fold("Ref " + booking.ref + (booking.barber ? " with " + booking.barber : "") + ". Pay in shop, " + euro(booking.price) + "."),
+        "DESCRIPTION:" + fold("Ref " + booking.ref + (booking.barber ? " with " + booking.barber : "") + ". " + payInLabel()[0].toUpperCase() + payInLabel().slice(1) + ", " + euro(booking.price) + "."),
         "LOCATION:" + fold(booking.address || booking.branchName),
         "END:VEVENT",
         "END:VCALENDAR"
@@ -2116,7 +2228,9 @@ const CONFIG = {
 
     function confirmBooking() {
       state.step = "done";
-      const s = svcById(state.service);
+      const svcs = selectedServices();
+      const s = svcs[0];
+      if (!s) return;
       const b = brById(state.branch);
       const now = maltaNow();
       const when = longDate(now, state.dayOffset) + " at " + state.time;
@@ -2128,10 +2242,11 @@ const CONFIG = {
         branch: b.id,
         branchName: b.name,
         address: b.address,
-        service: s.name,
+        service: serviceLabel(svcs),
         serviceId: s.id,
-        price: s.price,
-        mins: s.mins,
+        serviceIds: svcs.map(function (x) { return x.id; }),
+        price: servicePriceTotal(),
+        mins: serviceDurationMins(),
         stamp: dateStamp(now, state.dayOffset),
         time: state.time,
         when: when,
@@ -2152,7 +2267,7 @@ const CONFIG = {
       const first = booking.name ? escapeHtml(booking.name.split(/\s+/)[0]) : "";
       const thanks = "Thank you" + (first ? ", " + first : "") + ". Your " + escapeHtml(String(booking.service || "appointment").toLowerCase()) + " is booked for " + escapeHtml(booking.when) + (booking.barberFirst ? " with " + escapeHtml(booking.barberFirst) : "") + " at " + escapeHtml(booking.branchName) + ".";
       botSay(thanks);
-      const histText = "Booked " + booking.ref + " for " + booking.name + ", " + booking.service + " at " + booking.branchName + (booking.barber ? " with " + booking.barber : "") + ", " + booking.when + ". Pay in shop. The salon has been notified.";
+      const histText = "Booked " + booking.ref + " for " + booking.name + ", " + booking.service + " at " + booking.branchName + (booking.barber ? " with " + booking.barber : "") + ", " + booking.when + ". " + (payInLabel()[0].toUpperCase() + payInLabel().slice(1)) + ". The salon has been notified.";
       showStatusCard("booked", booking, "The salon has been notified", histText);
     }
 
@@ -2163,7 +2278,8 @@ const CONFIG = {
       if (words.length < 1 || words.length > 3) return false;
       if (s.length < 2 || s.length > 40) return false;
       if (!/^[A-Za-zÀ-ÖØ-öø-ÿĀ-ž'’.\-]+(?:\s+[A-Za-zÀ-ÖØ-öø-ÿĀ-ž'’.\-]+){0,2}$/.test(s)) return false;
-      if (words.length > 1 && /\b(the|a|an|do|does|did|is|are|am|was|were|can|could|would|should|have|has|had|what|when|where|who|why|how|which|please|available|better|later|earlier|today|tomorrow|book|booking|appointment|haircut|fade|beard|shave|thanks|thank)\b/i.test(s)) return false;
+      if (words.length > 1 && /\b(the|a|an|do|does|did|is|are|am|was|were|can|could|would|should|have|has|had|what|when|where|who|why|how|which|please|available|better|later|earlier|today|tomorrow|book|booking|appointment|thanks|thank)\b/i.test(s)) return false;
+      if (matchAllServices(s).length) return false;
       if (words.length === 1 && /^(the|a|an|do|does|did|is|are|am|was|were|can|could|would|should|have|has|had|what|when|where|who|why|how|which|please|available|better|later|earlier|today|tomorrow|yes|no|ok|okay|thanks|thank)$/i.test(s)) return false;
       return true;
     }
@@ -2179,11 +2295,11 @@ const CONFIG = {
       if (/\b(later|after that)\b/.test(t)) return "later";
       if (/\b(better time|another time|different time|other time|other slot|another slot|more times|any other time|else available|different slot)\b/.test(t)) return "other_time";
       if (/\b(another day|different day|other day|another date|different date|a different day)\b/.test(t)) return "other_day";
-      if (/\b(how much|price|prices|cost|costs|expensive|cheap|pay in shop|payment)\b/.test(t)) return "price";
+      if (/\b(how much|price|prices|cost|costs|expensive|cheap|pay in shop|pay in salon|payment)\b/.test(t)) return "price";
       if (/\b(where|address|location|located|directions|how do i get|on the map)\b/.test(t)) return "location";
       if (/\b(hours|open|close|opening|closing|what time do you)\b/.test(t)) return "hours";
       if (/\b((change|switch|different) (service|cut|style)|another service|change (the )?service)\b/.test(t)) return "change_service";
-      if (/\b((change|switch|different) (branch|shop)|another (branch|shop)|other (branch|shop)|change (the )?branch)\b/.test(t)) return "change_branch";
+      if (/\b((change|switch|different) (branch|shop|studio|salon)|another (branch|shop|studio|salon)|other (branch|shop|studio|salon)|change (the )?branch)\b/.test(t)) return "change_branch";
       return null;
     }
 
@@ -2394,18 +2510,38 @@ const CONFIG = {
         return { html: "Could you please share your name? A first name is enough. You're also welcome to ask about times, prices or the salon.", replies: [], focus: true };
       }
 
+      const mentioned = rememberServicesFromText(hist, raw);
+      const comboHint = /\b(how long|how much time|take for all|all three|all of them|together|combined|combination|combo|in one visit|at the same time|total (time|price|cost))\b/i.test(raw);
+      if (mentioned.length > 1 && (comboHint || looksLikeQuestion(raw) || /\b(how long|minutes|hours?|duration|how much|price|cost)\b/i.test(raw))) {
+        const ans = comboAnswer(mentioned);
+        if (ans) return withPrompt(ans.html);
+      }
+      if (looksLikeQuestion(raw) && !(state.step === "phone" || state.step === "email" || state.step === "name")) {
+        if (mentioned.length > 1) {
+          const ans = comboAnswer(mentioned);
+          if (ans) return withPrompt(ans.html);
+        }
+        return withPrompt(catchGenericHtml());
+      }
+
       if (state.step === "branch") {
         const id = matchBranch(t);
         if (id) return { action: "step", value: "br:" + id, label: brById(id).name };
-        return { html: "I didn’t catch the branch — pick one of the buttons, or type " + BRANCHES.map(function (b) { return b.name; }).join(", ").replace(/, ([^,]*)$/, " or $1") + ".", replies: branchReplies() };
+        return { html: "I didn't quite catch the branch — pick one of the buttons, or type " + BRANCHES.map(function (b) { return b.name; }).join(", ").replace(/, ([^,]*)$/, " or $1") + ".", replies: branchReplies() };
       }
       if (state.step === "service") {
-        const id = matchService(t);
-        if (id) {
-          const s = svcById(id);
-          return { action: "step", value: "svc:" + id, label: s.name + " · " + euro(s.price) };
+        const ids = mentioned.length ? mentioned : matchAllServices(t);
+        if (ids.length > 1) {
+          setServices(ids);
+          const ans = comboAnswer(ids);
+          return withPrompt((ans ? ans.html + " " : "") + "Which time would you like?");
         }
-        return { html: "I didn’t catch the service — use a button, or type haircut, skin fade, beard, and so on.", replies: serviceReplies() };
+        if (ids.length === 1) {
+          const s = svcById(ids[0]);
+          setServices(ids);
+          return { action: "step", value: "svc:" + ids[0], label: s.name + " · " + euro(s.price) };
+        }
+        return { html: catchServiceHtml(), replies: serviceReplies() };
       }
       if (state.step === "day") {
         const off = matchDay(t);
@@ -2423,7 +2559,7 @@ const CONFIG = {
         if (tm) return { html: escapeHtml(tm) + " isn't free that day. You can pick one of the times below.", replies: slots.slice(0, 6).map(function (x) { return { label: x, value: "time:" + x }; }) };
         return { html: "Pick a time from the buttons, or type one like 14:30.", replies: timeReplies() };
       }
-      return withPrompt("Sorry, I didn’t catch that.");
+      return withPrompt(catchGenericHtml());
     }
 
     function todayLabel() {
@@ -2461,20 +2597,31 @@ const CONFIG = {
     function hydrateBooking(bk) {
       if (!bk || typeof bk !== "object") return false;
       const br = findBranch(bk.branch);
-      const sv = findService(bk.service);
       const time = String(bk.time || "").trim();
       const date = String(bk.date || "").trim();
       const name = String(bk.name || "").trim();
-      if (!br || !sv || !name || !date || !/^\d{2}:\d{2}$/.test(time)) return false;
+      const names = [];
+      if (Array.isArray(bk.services)) bk.services.forEach(function (x) { if (x) names.push(String(x)); });
+      if (bk.service) String(bk.service).split(/\s*,\s*|\s+and\s+|\s*&\s*|\s*\+\s*/i).forEach(function (x) {
+        const s = x.trim();
+        if (s) names.push(s);
+      });
+      const ids = [];
+      names.forEach(function (n) {
+        const sv = findService(n);
+        const fallback = sv ? [sv.id] : matchAllServices(n);
+        fallback.forEach(function (id) { if (id && ids.indexOf(id) === -1) ids.push(id); });
+      });
+      if (!br || !ids.length || !name || !date || !/^\d{2}:\d{2}$/.test(time)) return false;
       const now = maltaNow();
       let offset = null;
       for (let i = 0; i <= 14; i++) {
         if (dateStamp(now, i) === date) { offset = i; break; }
       }
       if (offset == null) return false;
+      setServices(ids);
       if (slotsFor(br, now, offset).indexOf(time) === -1) return false;
       state.branch = br.id;
-      state.service = sv.id;
       state.dayOffset = offset;
       state.time = time;
       state.name = name;
@@ -2489,7 +2636,14 @@ const CONFIG = {
       const barber = assignedBarber();
       const out = { awaiting: state.step || null };
       if (b) { out.branch = b.name; out.branchId = b.id; }
-      if (s) { out.service = s.name; out.serviceId = s.id; }
+      const list = selectedServices();
+      if (list.length) {
+        out.service = serviceLabel(list);
+        out.serviceId = list[0].id;
+        out.services = list.map(function (x) { return x.name; });
+        out.mins = serviceDurationMins();
+        out.price = servicePriceTotal();
+      } else if (s) { out.service = s.name; out.serviceId = s.id; }
       if (state.dayOffset != null) {
         out.date = dateStamp(maltaNow(), state.dayOffset);
         out.dayLabel = longDate(maltaNow(), state.dayOffset);
@@ -2506,11 +2660,7 @@ const CONFIG = {
     // and expect { reply, booking, quickReplies }. On error, use the scripted assistant.
     async function getReply(hist) {
       if (C.aiEndpoint) {
-        try {
-          const res = await fetch(C.aiEndpoint, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
+        const payload = {
               messages: hist,
               "config-subset": {
                 name: C.name,
@@ -2527,19 +2677,30 @@ const CONFIG = {
               today: todayLabel(),
               selected: selectedPayload(),
               bookings: bookingsPayload()
-            })
-          });
-          if (res.ok) {
-            const data = await res.json();
-            if (data && (data.reply || data.text || data.html || data.replies || data.quickReplies || data.action || data.booking)) {
-              if (data.reply && !data.text && !data.html) data.text = data.reply;
-              if (data.quickReplies && !data.replies) {
-                data.replies = data.quickReplies.map(function (label) { return { label: label, value: "ai:" + label }; });
+            };
+        const delays = [0, 400, 1200];
+        for (let attempt = 0; attempt < delays.length; attempt++) {
+          if (delays[attempt]) await new Promise(function (r) { setTimeout(r, delays[attempt]); });
+          try {
+            const res = await fetch(C.aiEndpoint, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+              const data = await res.json();
+              if (data && (data.reply || data.text || data.html || data.replies || data.quickReplies || data.action || data.booking)) {
+                if (data.reply && !data.text && !data.html) data.text = data.reply;
+                if (data.quickReplies && !data.replies) {
+                  data.replies = data.quickReplies.map(function (label) { return { label: label, value: "ai:" + label }; });
+                }
+                return data;
               }
-              return data;
+              break;
             }
-          }
-        } catch (err) { /* fall back to scripted */ }
+            if (res.status !== 429 && res.status !== 503 && res.status !== 502) break;
+          } catch (err) { /* retry, then scripted */ }
+        }
       }
       return scriptedReply(hist);
     }
@@ -2613,7 +2774,7 @@ const CONFIG = {
         }
         const askedPhone = /phone|mobile|number/i.test(reply.text || reply.html || "");
         const askedEmail = /e-?mail/i.test(reply.text || reply.html || "");
-        if (state.name && state.branch && state.service && state.time != null && state.dayOffset != null) {
+        if (state.name && state.branch && hasServices() && state.time != null && state.dayOffset != null) {
           if (!state.phone) {
             if (askedPhone && (reply.text || reply.html)) {
               state.step = "phone";
@@ -2696,7 +2857,8 @@ const CONFIG = {
         applyReply(reply);
         return;
       }
-      if (state.step === "name" && looksLikeName(raw) && state.branch && state.service && state.time != null) {
+      if (matchAllServices(raw).length > 1) setServices(matchAllServices(raw));
+      if (state.step === "name" && looksLikeName(raw) && state.branch && hasServices() && state.time != null) {
         state.name = raw.replace(/\s+/g, " ");
         askPhone();
         return;
@@ -2792,7 +2954,7 @@ const CONFIG = {
           askDay();
         }
       } else if (value.startsWith("svc:")) {
-        state.service = value.slice(4);
+        setServices([value.slice(4)]);
         renderServices();
         updateSticky();
         if (state.branch && state.time != null && state.dayOffset != null) askName();
@@ -2865,7 +3027,7 @@ const CONFIG = {
     serviceList.addEventListener("click", (e) => {
       const li = e.target.closest("li[data-id]");
       if (!li || li.classList.contains("cat")) return;
-      state.service = li.dataset.id;
+      setServices([li.dataset.id]);
       renderServices();
       renderSlots();
       updateSticky();
@@ -2875,7 +3037,7 @@ const CONFIG = {
       const li = e.target.closest("li[data-id]");
       if (!li || li.classList.contains("cat")) return;
       e.preventDefault();
-      state.service = li.dataset.id;
+      setServices([li.dataset.id]);
       renderServices();
       renderSlots();
       updateSticky();
