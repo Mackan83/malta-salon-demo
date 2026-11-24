@@ -13,7 +13,7 @@ Edit the commented `CONFIG` block at the top of `index.html`. Everything on the 
 - **Branches** — name, address, hours, `openDays` (0 = Sunday), `openHour` / `closeHour` (decimals allowed, e.g. `9.5` for 09:30), optional `closeHourByDay`, Google Maps link, chat `aliases`
 - **Services** — name, `category`, `price`, `mins`, `aliases` for typed chat. Slot times respect each service’s duration and will not overlap an existing booking.
 - **Times** — leave `sampleSlots` off a branch to auto-fill demo times from opening hours
-- **Reviews, about, chat greeting, copy, footer**
+- **Reviews, chat greeting, copy, footer**
 - **Desktop hero column** — `heroAside` (trust strip, benefit tiles, a short review quote, hours line, chat button). It only shows on desktop.
 - **Knowledge** — `knowledge` is the salon fact pack the assistant is allowed to use (services in detail, hours, parking, policies, stylists, FAQs). Keep prices and hours in line with `services` and `branches`.
 - **Demo banner** — set `demoBanner.show` to `false` when this is no longer a pitch demo

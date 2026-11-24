@@ -59,14 +59,13 @@ const CONFIG = {
       servicesTitle: "Services & prices",
       pricesNote: "Example prices for this demo — a real salon would show its own.",
       slotsTitleToday: "Next free slots today",
+      slotsTitleTomorrow: "Next free slots tomorrow",
       slotsTitleOther: "Next free slots {day}",
       slotsNote: "Demo availability — not a live calendar. Times respect each service’s duration.",
       branchesTitle: "Three studios, one number",
       branchesLede: "Pick the closest chair. Call or open maps.",
       reviewsTitle: "What clients say",
       reviewsLede: "Short and useful — the kind of reviews people actually read.",
-      aboutTitle: "The salon",
-      about: "Liora Studio is a fictional Malta beauty house built for this demo: hair colour and cuts, gel and BIAB nails, lash lifts and brow laminations, with prices on the first screen and a chair you can hold in two taps. The look is light and colourful so a salon can picture this as their own site, without galleries getting in the way of booking.",
       footerBlurb: "A demo website for Malta beauty salons, nail studios and lash bars.",
       footerFine: "This is a pitch mockup, not a live salon. Names, addresses, prices and times are examples. Bookings stay on this page — nothing is charged, and you pay in the salon.",
       stickyReady: "Ready to book?",
@@ -505,34 +504,13 @@ const CONFIG = {
       text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
     }
 
-    /* Reviews, about, gallery */
+    /* Reviews */
     .reviews { display: grid; gap: 12px; }
     blockquote.card { margin: 0; }
     blockquote.card p { font-size: 14.5px; color: var(--text); }
     .stars { color: var(--gold); letter-spacing: 1px; font-size: 13px; margin-bottom: 6px; }
     .who { color: var(--muted); font-size: 12.5px; margin-top: 10px; }
-    .about p { color: var(--soft); max-width: 62ch; }
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-top: 16px;
-    }
-    .tile {
-      aspect-ratio: 1;
-      border-radius: 10px;
-      border: 1px solid var(--line);
-      background:
-        radial-gradient(circle at 30% 20%, rgba(196,92,110,0.16), transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(179,155,201,0.14), transparent 48%),
-        var(--bg-2);
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-      color: var(--gold-2);
-      font-size: 12px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-    .tile svg { width: 36px; height: 36px; stroke: var(--gold); fill: none; stroke-width: 1.4; }
+
 
     footer {
       border-top: 1px solid var(--line);
@@ -906,26 +884,6 @@ const CONFIG = {
       </div>
     </section>
 
-    <section class="about" id="about">
-      <div class="wrap">
-        <h2 class="sec" id="aboutTitle">The salon</h2>
-        <p id="aboutText">Liora Studio is a fictional Malta beauty house built for this demo: hair colour and cuts, gel and BIAB nails, lash lifts and brow laminations, with prices on the first screen and a chair you can hold in two taps.</p>
-        <div class="gallery" aria-hidden="true">
-          <div class="tile">
-            <svg viewBox="0 0 36 36"><circle cx="10" cy="10" r="3.5"/><circle cx="26" cy="10" r="3.5"/><path d="M10 13.5 16 28m10-14.5L20 28M16 28h4"/></svg>
-            Cuts
-          </div>
-          <div class="tile">
-            <svg viewBox="0 0 36 36"><path d="M8 26c6-14 14-14 20 0"/><path d="M12 22h12"/><path d="M18 8v6"/></svg>
-            Shaves
-          </div>
-          <div class="tile">
-            <svg viewBox="0 0 36 36"><rect x="8" y="16" width="20" height="10" rx="1.5"/><path d="M12 16V12a6 6 0 0 1 12 0v4"/></svg>
-            The chair
-          </div>
-        </div>
-      </div>
-    </section>
   </main>
 
   <footer>
@@ -1105,8 +1063,6 @@ const CONFIG = {
       setText("branchesLede", copy.branchesLede);
       setText("reviewsTitle", copy.reviewsTitle);
       setText("reviewsLede", copy.reviewsLede);
-      setText("aboutTitle", copy.aboutTitle);
-      setText("aboutText", copy.about);
       setText("chatTitle", C.chat && C.chat.title);
       setText("chatSubtitle", C.chat && C.chat.subtitle);
       setText("heroChat", C.heroAside && C.heroAside.chatButton);
@@ -1547,15 +1503,33 @@ const CONFIG = {
       }).join("");
     }
 
+    function freeSlotCount(now, offset) {
+      return BRANCHES.reduce(function (n, b) { return n + slotsFor(b, now, offset).length; }, 0);
+    }
+    function branchesWithFreeSlots(now, offset) {
+      return BRANCHES.filter(function (b) { return slotsFor(b, now, offset).length > 0; }).length;
+    }
+    function pickSlotsOffset(now) {
+      const todayCount = freeSlotCount(now, 0);
+      const todayBranches = branchesWithFreeSlots(now, 0);
+      // Evening / almost-full days: don't leave a box of "Closed or fully booked".
+      if (!(todayCount === 0 || todayCount < 3 || todayBranches < 2)) return 0;
+      for (var o = 1; o <= 7; o++) {
+        if (freeSlotCount(now, o) > 0) return o;
+      }
+      return 0;
+    }
+    function slotsHeadingText(now, offset, copy) {
+      if (offset === 0) return copy.slotsTitleToday || "Next free slots today";
+      if (offset === 1) return copy.slotsTitleTomorrow || "Next free slots tomorrow";
+      return (copy.slotsTitleOther || "Next free slots {day}").replace("{day}", dateLabel(now, offset));
+    }
+
     function renderSlots() {
       const now = maltaNow();
-      let offset = 0;
-      let any = BRANCHES.some((b) => slotsFor(b, now, 0).length);
-      if (!any) { offset = (now.dow === 0) ? 1 : 1; any = true; }
+      const offset = pickSlotsOffset(now);
       const copy = C.copy || {};
-      $("slotsHeading").textContent = offset === 0
-        ? (copy.slotsTitleToday || "Next free slots today")
-        : (copy.slotsTitleOther || "Next free slots {day}").replace("{day}", dateLabel(now, offset).toLowerCase());
+      $("slotsHeading").textContent = slotsHeadingText(now, offset, copy);
       slotRows.innerHTML = BRANCHES.map((b) => {
         const stamp = dateStamp(now, offset);
         const free = slotsFor(b, now, offset);
